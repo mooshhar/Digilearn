@@ -35,7 +35,7 @@ h1{margin-bottom:16px}
 </div>
 
 <script type="module">
-import { initDB, getUser, updateUser } from './auth_v6_1.js';
+import { initDB, getUser } from './auth_v6_1.js';
 
 const $ = id => document.getElementById(id);
 const usernameDisplay = $('usernameDisplay');
@@ -47,36 +47,25 @@ function showMessage(text, type='error'){
 }
 
 // ---------------------------
-// IndexedDB session helpers
+// Session helpers using session store only
 // ---------------------------
-async function getCurrentUser() {
+async function getActiveSession(){
   const db = await initDB();
   return new Promise((resolve,reject)=>{
-    const tx = db.transaction('settings','readonly');
-    const store = tx.objectStore('settings');
-    const req = store.get('currentUser');
-    req.onsuccess = ()=> resolve(req.result?.value || null);
+    const tx = db.transaction('session','readonly');
+    const store = tx.objectStore('session');
+    const req = store.get('activeUser');
+    req.onsuccess = ()=> resolve(req.result?.username || null);
     req.onerror = ()=> reject(req.error);
   });
 }
 
-async function setCurrentUser(username) {
+async function clearActiveSession(){
   const db = await initDB();
   return new Promise((resolve,reject)=>{
-    const tx = db.transaction('settings','readwrite');
-    const store = tx.objectStore('settings');
-    const req = store.put({key:'currentUser', value: username});
-    req.onsuccess = ()=> resolve(true);
-    req.onerror = ()=> reject(req.error);
-  });
-}
-
-async function clearCurrentUser() {
-  const db = await initDB();
-  return new Promise((resolve,reject)=>{
-    const tx = db.transaction('settings','readwrite');
-    const store = tx.objectStore('settings');
-    const req = store.delete('currentUser');
+    const tx = db.transaction('session','readwrite');
+    const store = tx.objectStore('session');
+    const req = store.delete('activeUser');
     req.onsuccess = ()=> resolve(true);
     req.onerror = ()=> reject(req.error);
   });
@@ -86,7 +75,7 @@ async function clearCurrentUser() {
 // Initialize dashboard
 // ---------------------------
 async function initDashboard(){
-  const username = await getCurrentUser();
+  const username = await getActiveSession();
   if(!username){
     showMessage('No active session. Redirecting...', 'error');
     setTimeout(()=> window.location.href='welcome.html', 800);
@@ -101,31 +90,13 @@ async function initDashboard(){
   }
 
   usernameDisplay.textContent = user.username;
-
-  // Optional: handle dark mode preference
-  const darkMode = (await dbTransactionGet('settings', `${user.username}_darkMode`));
-  if(darkMode==='true') document.body.classList.add('dark');
-}
-
-// ---------------------------
-// Helper to get any key from settings
-// ---------------------------
-async function dbTransactionGet(storeName,key){
-  const db = await initDB();
-  return new Promise((resolve,reject)=>{
-    const tx = db.transaction(storeName,'readonly');
-    const store = tx.objectStore(storeName);
-    const req = store.get(key);
-    req.onsuccess = ()=> resolve(req.result?.value || null);
-    req.onerror = ()=> reject(req.error);
-  });
 }
 
 // ---------------------------
 // Logout event
 // ---------------------------
 $('logoutBtn').addEventListener('click', async ()=>{
-  await clearCurrentUser();
+  await clearActiveSession();
   window.location.href = 'welcome.html';
 });
 
