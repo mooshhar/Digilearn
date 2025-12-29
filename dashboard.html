@@ -1,110 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-<title>DigiLearn — Dashboard</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>DigiLearn — Welcome</title>
 <style>
 :root {
-  --bg:#f6fbff; --card:#fff; --accent:#2563eb; --text:#0f172a; --muted:#6b7280;
-  --radius:18px; --shadow:0 8px 24px rgba(16,24,40,0.08); --transition:240ms cubic-bezier(.25,.45,.35,1);
+  --bg: #f6fbff; --card: #fff; --accent: #2563eb; --accent-soft: rgba(37,99,235,0.13);
+  --text-dark: #0f172a; --muted: #6b7280; --radius: 18px;
+  --shadow-soft: 0 8px 24px rgba(16,24,40,0.08);
+  --transition: 240ms cubic-bezier(.25,.45,.35,1);
 }
 body.dark {
-  --bg:#1f2937; --card:#111827; --accent:#3b82f6; --text:#f9fafb; --muted:#9ca3af;
+  --bg: #1f2937; --card: #111827; --accent: #3b82f6; --accent-soft: rgba(59,130,246,0.13);
+  --text-dark: #f9fafb; --muted: #9ca3af;
 }
-*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial}
-html,body{height:100%;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
-body{display:flex;flex-direction:column;align-items:center;padding:20px;min-height:100vh}
-.wrapper{
-  width:100%;max-width:720px;background:var(--card);border-radius:var(--radius);
-  padding:32px 28px;box-shadow:var(--shadow);text-align:center;
-}
-h1{margin-bottom:16px}
-.message{margin-top:12px;font-weight:600}
-.btn{padding:12px 24px;border:none;border-radius:12px;background:var(--accent);color:#fff;font-size:16px;cursor:pointer;margin-top:14px;transition:transform .15s ease}
-.btn:active{transform:scale(0.97)}
+* { box-sizing: border-box; margin:0; padding:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial; }
+html, body { height:100%; display:flex; justify-content:center; align-items:center; background:var(--bg); color:var(--text-dark); }
+.wrapper { width:100%; max-width:430px; background: var(--card); padding:32px; border-radius: var(--radius); box-shadow: var(--shadow-soft); text-align:center; }
+.title { font-size: 24px; font-weight:700; margin-bottom:24px; }
+form { display:flex; flex-direction:column; gap:16px; }
+input { width:100%; padding:14px; border-radius:14px; border:1px solid rgba(0,0,0,0.1); font-size:17px; }
+input:focus { border-color: var(--accent); outline:none; box-shadow:0 0 0 3px rgba(37,99,235,0.18); }
+.btn-primary { padding:14px; border:none; border-radius:14px; background:var(--accent); color:#fff; font-size:17px; cursor:pointer; font-weight:600; }
+.message { margin-top:18px; font-size:15px; font-weight:500; color:#dc2626; display:none; }
+.message.success { color:#059669; }
 </style>
 </head>
 <body>
-
 <div class="wrapper">
-  <h1>Welcome, <span id="usernameDisplay"></span>!</h1>
-  <p>This is your DigiLearn Dashboard.</p>
+  <div class="title">Welcome to DigiLearn</div>
+  <form id="loginForm">
+    <input type="text" id="username" placeholder="Username or Email" autocomplete="username" required>
+    <input type="password" id="password" placeholder="Password" autocomplete="current-password" required>
+    <button class="btn-primary" type="submit">Login</button>
+  </form>
   <div id="msg" class="message"></div>
-  <button id="logoutBtn" class="btn">Logout</button>
 </div>
 
 <script type="module">
-import { initDB, getUser } from './auth_v6_1.js';
+import { getUser, setSession, initDB } from './auth_v6_1.js';
 
 const $ = id => document.getElementById(id);
-const usernameDisplay = $('usernameDisplay');
+const form = $('loginForm');
 const msgEl = $('msg');
 
 function showMessage(text, type='error'){
   msgEl.textContent = text;
-  msgEl.style.color = type==='error' ? '#dc2626' : '#059669';
+  msgEl.className = 'message ' + (type==='success' ? 'success' : 'error');
+  msgEl.style.display = 'block';
 }
 
 // ---------------------------
-// Session helpers using session store only
+// Login handler
 // ---------------------------
-async function getActiveSession(){
-  const db = await initDB();
-  return new Promise((resolve,reject)=>{
-    const tx = db.transaction('session','readonly');
-    const store = tx.objectStore('session');
-    const req = store.get('activeUser');
-    req.onsuccess = ()=> resolve(req.result?.username || null);
-    req.onerror = ()=> reject(req.error);
-  });
-}
+async function loginUser(usernameOrEmail, password){
+  if(!usernameOrEmail || !password) return { success:false, message:'Please fill in all fields' };
 
-async function clearActiveSession(){
-  const db = await initDB();
-  return new Promise((resolve,reject)=>{
-    const tx = db.transaction('session','readwrite');
-    const store = tx.objectStore('session');
-    const req = store.delete('activeUser');
-    req.onsuccess = ()=> resolve(true);
-    req.onerror = ()=> reject(req.error);
-  });
-}
+  await initDB();
+  try {
+    const user = await getUser(usernameOrEmail);
+    if(!user) return { success:false, message:'User not found' };
+    if(user.password !== password) return { success:false, message:'Incorrect password' };
 
-// ---------------------------
-// Initialize dashboard
-// ---------------------------
-async function initDashboard(){
-  const username = await getActiveSession();
-  if(!username){
-    showMessage('No active session. Redirecting...', 'error');
-    setTimeout(()=> window.location.href='welcome.html', 800);
-    return;
+    await setSession(user.username); // <-- Save active session in IndexedDB
+
+    return { success:true, message:'Login successful!' };
+  } catch(err) {
+    console.error(err);
+    return { success:false, message:'Login failed. Try again.' };
   }
-
-  const user = await getUser(username);
-  if(!user){
-    showMessage('User not found. Redirecting...', 'error');
-    setTimeout(()=> window.location.href='welcome.html', 800);
-    return;
-  }
-
-  usernameDisplay.textContent = user.username;
 }
 
 // ---------------------------
-// Logout event
+// Form submit
 // ---------------------------
-$('logoutBtn').addEventListener('click', async ()=>{
-  await clearActiveSession();
-  window.location.href = 'welcome.html';
+form.addEventListener('submit', async e => {
+  e.preventDefault();
+  const usernameOrEmail = $('username').value.trim();
+  const password = $('password').value;
+
+  const result = await loginUser(usernameOrEmail, password);
+  showMessage(result.message, result.success ? 'success' : 'error');
+
+  if(result.success){
+    setTimeout(()=> window.location.href='dashboard.html', 700);
+  }
 });
-
-// ---------------------------
-// Start
-// ---------------------------
-initDashboard();
 </script>
-
 </body>
 </html>
