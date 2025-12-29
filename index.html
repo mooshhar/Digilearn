@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="theme-color" content="#F6FBFF" />
+  <title>DigiLearn — Loading</title>
+  <style>
+    :root{
+      --bg: #f6fbff;
+      --card: #ffffff;
+      --accent: #2563eb; /* modern blue */
+      --muted: #6b7280;
+      --glass: rgba(37,99,235,0.06);
+      --radius: 18px;
+      --shadow-soft: 0 8px 20px rgba(16,24,40,0.06);
+      --shadow-strong: 0 12px 36px rgba(16,24,40,0.10);
+      --safe-gap: clamp(16px, 3.5vw, 28px);
+    }
+
+    /* Reset & base */
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: linear-gradient(180deg, var(--bg) 0%, #ffffff 100%);
+      color: #0f172a;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:var(--safe-gap);
+    }
+
+    /* Container */
+    .splash {
+      width:100%;
+      max-width:420px;
+      margin:auto;
+      background: linear-gradient(180deg, rgba(255,255,255,0.85), rgba(255,255,255,0.95));
+      border-radius: calc(var(--radius) + 6px);
+      box-shadow: var(--shadow-soft), 0 1px 0 rgba(255,255,255,0.6) inset;
+      padding: clamp(22px, 6vw, 36px);
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:18px;
+      min-height:320px;
+      justify-content:center;
+      position:relative;
+      overflow:visible;
+      border: 1px solid rgba(16,24,40,0.03);
+      text-align:center;
+      /* fade-in applied here */
+      opacity:0;
+      transform: translateY(8px) scale(0.998);
+      animation: fadeInUp 700ms cubic-bezier(.2,.9,.3,1) forwards;
+    }
+
+    /* Fade-in for whole content */
+    @keyframes fadeInUp {
+      from { opacity:0; transform: translateY(14px) scale(0.998); }
+      to   { opacity:1; transform: translateY(0) scale(1); }
+    }
+
+    /* Logo (rounded-square) */
+    .logo {
+      width:92px;
+      height:92px;
+      border-radius:18px;
+      overflow:hidden;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      background: linear-gradient(135deg, var(--glass), rgba(37,99,235,0.02));
+      box-shadow: var(--shadow-strong);
+      flex-shrink:0;
+      border: 1px solid rgba(37,99,235,0.06);
+    }
+    .logo img{
+      width:72%;
+      height:72%;
+      object-fit:contain;
+      display:block;
+      user-select:none;
+      -webkit-user-drag:none;
+    }
+
+    /* App title */
+    .title {
+      font-weight:700;
+      font-size: clamp(20px, 3.6vw, 28px);
+      letter-spacing: -0.02em;
+      margin-top:6px;
+      color: #0b1330;
+      display:flex;
+      align-items:baseline;
+      gap:10px;
+    }
+    .title .brand {
+      display:block;
+      line-height:1;
+    }
+    .title .dot {
+      width:8px;
+      height:8px;
+      background:var(--accent);
+      border-radius:50%;
+      box-shadow: 0 6px 18px rgba(37,99,235,0.14);
+      transform:translateY(-2px);
+    }
+
+    /* Loader wrapper */
+    .loader-wrap{
+      margin-top:6px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:14px;
+      width:100%;
+    }
+
+    /* Spinner (pure CSS) */
+    .spinner{
+      --size:64px;
+      width:var(--size);
+      height:var(--size);
+      border-radius:50%;
+      position:relative;
+    }
+    .spinner::before,
+    .spinner::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      border-radius:50%;
+      box-shadow: 0 0 0 6px rgba(37,99,235,0.06) inset;
+    }
+    .ring{
+      width:100%;
+      height:100%;
+      border-radius:50%;
+      border:6px solid rgba(99,102,241,0.12);
+      border-top-color: var(--accent);
+      animation: spin 1.05s linear infinite;
+      -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 8px), black 0);
+      mask: radial-gradient(farthest-side, transparent calc(100% - 8px), black 0);
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Tagline */
+    .tagline {
+      font-size: clamp(13px, 2.2vw, 15px);
+      color: var(--muted);
+      max-width: 88%;
+      margin:0 auto;
+      line-height:1.35;
+    }
+
+    /* micro footer/progress hint */
+    .small {
+      margin-top:8px;
+      font-size:12px;
+      color: rgba(11,17,48,0.45);
+    }
+
+    /* Accessibility & reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      .splash { animation: none; opacity:1; transform:none; }
+      .ring { animation: none; }
+    }
+
+    /* Responsiveness */
+    @media (max-width:420px) {
+      .logo{ width:84px; height:84px; border-radius:16px; }
+      .spinner{ --size:56px; }
+      .splash{ padding: clamp(16px,5vw,22px); border-radius:14px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="splash" role="main" aria-labelledby="app-title" aria-busy="true">
+    <div class="logo" aria-hidden="false">
+      <!-- Replace logo.png with your actual image file -->
+      <img src="logo.png" alt="DigiLearn logo" decoding="async" draggable="false" />
+    </div>
+
+    <h1 id="app-title" class="title" aria-label="DigiLearn">
+      <span class="brand">DigiLearn</span>
+      <span class="dot" aria-hidden="true"></span>
+    </h1>
+
+    <div class="loader-wrap" aria-hidden="false">
+      <div class="spinner" role="img" aria-label="Loading">
+        <div class="ring" aria-hidden="true"></div>
+      </div>
+
+      <p class="tagline">Loading your learning experience…</p>
+
+      <div class="small" aria-hidden="true">Starting up — preparing lessons and resources</div>
+    </div>
+  </main>
+
+  <script>
+    (function(){
+      'use strict';
+
+      // Redirect target: change here if you prefer index.html or another path
+      var REDIRECT_TARGET = 'welcome.html';
+
+      // Timer length in milliseconds (10 seconds)
+      var REDIRECT_MS = 10000;
+
+      // Accessibility: announce remaining seconds via polite live region (progressive enhancement)
+      var live = document.createElement('div');
+      live.setAttribute('aria-live','polite');
+      live.style.position = 'absolute';
+      live.style.left = '-9999px';
+      live.style.width = '1px';
+      live.style.height = '1px';
+      live.style.overflow = 'hidden';
+      document.body.appendChild(live);
+
+      var start = Date.now();
+      var remaining = Math.ceil(REDIRECT_MS / 1000);
+      live.textContent = 'App will open in ' + remaining + ' seconds.';
+
+      // countdown only for UX — does not block redirect
+      var countdown = setInterval(function(){
+        var elapsed = Date.now() - start;
+        var secsLeft = Math.ceil((REDIRECT_MS - elapsed) / 1000);
+        if (secsLeft !== remaining) {
+          remaining = secsLeft;
+          live.textContent = remaining > 0
+            ? 'App will open in ' + remaining + ' seconds.'
+            : 'Opening app now.';
+        }
+        if (elapsed >= REDIRECT_MS) {
+          clearInterval(countdown);
+        }
+      }, 250);
+
+      // Safety: if page is hidden or user navigates away, still attempt redirect when visible next time.
+      // Use visibility API to pause unnecessary work.
+      var visibilityHandler = function(){
+        // no heavy work to pause — kept for future-proofing PWA behavior
+      };
+      document.addEventListener('visibilitychange', visibilityHandler, {passive:true});
+
+      // Set the redirect
+      var redirectTimeout = setTimeout(function(){
+        // mark as not busy for assistive tech
+        var main = document.querySelector('.splash');
+        if (main) main.setAttribute('aria-busy','false');
+
+        // Use location.replace so splash isn't kept in history (native-like behavior)
+        try {
+          window.location.replace(REDIRECT_TARGET);
+        } catch (e) {
+          // fallback to assign if replace fails
+          window.location.href = REDIRECT_TARGET;
+        }
+      }, REDIRECT_MS);
+
+      // Extra: if user taps anywhere on the splash, try to go immediately (makes UX snappy)
+      document.querySelector('.splash').addEventListener('click', function(){
+        clearTimeout(redirectTimeout);
+        try { window.location.replace(REDIRECT_TARGET); } catch(e){ window.location.href = REDIRECT_TARGET; }
+      }, {passive:true});
+
+      // Prevent accidental text selection on long-tap in mobile
+      document.addEventListener('touchstart', function(){}, {passive:true});
+    })();
+  </script>
+</body>
+</html>
+
