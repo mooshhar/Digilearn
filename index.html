@@ -1,281 +1,216 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-  <meta name="theme-color" content="#F6FBFF" />
-  <title>DigiLearn — Loading</title>
-  <style>
-    :root{
-      --bg: #f6fbff;
-      --card: #ffffff;
-      --accent: #2563eb; /* modern blue */
-      --muted: #6b7280;
-      --glass: rgba(37,99,235,0.06);
-      --radius: 18px;
-      --shadow-soft: 0 8px 20px rgba(16,24,40,0.06);
-      --shadow-strong: 0 12px 36px rgba(16,24,40,0.10);
-      --safe-gap: clamp(16px, 3.5vw, 28px);
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>DigiLearn — All-in-One</title>
+<style>
+:root {
+  --bg: #f6fbff; --card: #fff; --accent: #2563eb; --accent-soft: rgba(37,99,235,0.13);
+  --text-dark: #0f172a; --muted: #6b7280; --radius: 18px;
+  --shadow-soft: 0 8px 24px rgba(16,24,40,0.08);
+  --transition: 240ms cubic-bezier(.25,.45,.35,1);
+}
+body.dark {
+  --bg: #1f2937; --card: #111827; --accent: #3b82f6; --accent-soft: rgba(59,130,246,0.13);
+  --text-dark: #f9fafb; --muted: #9ca3af;
+}
+* { box-sizing:border-box; margin:0; padding:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial; }
+html, body { height:100%; background:var(--bg); color:var(--text-dark); display:flex; justify-content:center; align-items:center; padding:20px; }
+.hidden { display:none; }
+.wrapper { width:100%; max-width:430px; background: var(--card); padding:32px; border-radius: var(--radius); box-shadow: var(--shadow-soft); text-align:center; opacity:1; transition: opacity 0.3s ease, transform 0.3s ease; }
+input { width:100%; padding:14px; border-radius:14px; border:1px solid rgba(0,0,0,0.1); font-size:17px; margin-bottom:12px; }
+input:focus { border-color: var(--accent); outline:none; box-shadow:0 0 0 3px rgba(37,99,235,0.18); }
+.btn-primary { padding:14px; border:none; border-radius:14px; background:var(--accent); color:#fff; font-size:17px; cursor:pointer; font-weight:600; margin-top:10px; }
+.btn-secondary { margin-top:10px; padding:12px; border-radius:12px; border:1px solid rgba(0,0,0,0.12); background:#f8fafc; color:var(--text-dark); font-size:16px; cursor:pointer; }
+.message { margin-top:18px; font-size:15px; font-weight:500; opacity:0; transition: opacity 0.3s ease, transform 0.3s ease; }
+.message.show { opacity:1; transform:translateY(0); }
+.success { color:#059669; }
+.error { color:#dc2626; }
 
-    /* Reset & base */
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-      background: linear-gradient(180deg, var(--bg) 0%, #ffffff 100%);
-      color: #0f172a;
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:var(--safe-gap);
-    }
+/* Splash specific */
+.splash { width:100%; max-width:420px; background: linear-gradient(180deg, rgba(255,255,255,0.85), rgba(255,255,255,0.95)); border-radius:24px; box-shadow: var(--shadow-soft); padding:32px; display:flex; flex-direction:column; align-items:center; gap:18px; text-align:center; opacity:1; transition: opacity 0.5s ease; }
+.spinner{ width:64px; height:64px; border:6px solid rgba(99,102,241,0.12); border-top-color: var(--accent); border-radius:50%; animation:spin 1.05s linear infinite; margin-bottom:14px; }
+@keyframes spin { to { transform: rotate(360deg); } }
 
-    /* Container */
-    .splash {
-      width:100%;
-      max-width:420px;
-      margin:auto;
-      background: linear-gradient(180deg, rgba(255,255,255,0.85), rgba(255,255,255,0.95));
-      border-radius: calc(var(--radius) + 6px);
-      box-shadow: var(--shadow-soft), 0 1px 0 rgba(255,255,255,0.6) inset;
-      padding: clamp(22px, 6vw, 36px);
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      gap:18px;
-      min-height:320px;
-      justify-content:center;
-      position:relative;
-      overflow:visible;
-      border: 1px solid rgba(16,24,40,0.03);
-      text-align:center;
-      /* fade-in applied here */
-      opacity:0;
-      transform: translateY(8px) scale(0.998);
-      animation: fadeInUp 700ms cubic-bezier(.2,.9,.3,1) forwards;
-    }
-
-    /* Fade-in for whole content */
-    @keyframes fadeInUp {
-      from { opacity:0; transform: translateY(14px) scale(0.998); }
-      to   { opacity:1; transform: translateY(0) scale(1); }
-    }
-
-    /* Logo (rounded-square) */
-    .logo {
-      width:92px;
-      height:92px;
-      border-radius:18px;
-      overflow:hidden;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      background: linear-gradient(135deg, var(--glass), rgba(37,99,235,0.02));
-      box-shadow: var(--shadow-strong);
-      flex-shrink:0;
-      border: 1px solid rgba(37,99,235,0.06);
-    }
-    .logo img{
-      width:72%;
-      height:72%;
-      object-fit:contain;
-      display:block;
-      user-select:none;
-      -webkit-user-drag:none;
-    }
-
-    /* App title */
-    .title {
-      font-weight:700;
-      font-size: clamp(20px, 3.6vw, 28px);
-      letter-spacing: -0.02em;
-      margin-top:6px;
-      color: #0b1330;
-      display:flex;
-      align-items:baseline;
-      gap:10px;
-    }
-    .title .brand {
-      display:block;
-      line-height:1;
-    }
-    .title .dot {
-      width:8px;
-      height:8px;
-      background:var(--accent);
-      border-radius:50%;
-      box-shadow: 0 6px 18px rgba(37,99,235,0.14);
-      transform:translateY(-2px);
-    }
-
-    /* Loader wrapper */
-    .loader-wrap{
-      margin-top:6px;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      gap:14px;
-      width:100%;
-    }
-
-    /* Spinner (pure CSS) */
-    .spinner{
-      --size:64px;
-      width:var(--size);
-      height:var(--size);
-      border-radius:50%;
-      position:relative;
-    }
-    .spinner::before,
-    .spinner::after{
-      content:"";
-      position:absolute;
-      inset:0;
-      border-radius:50%;
-      box-shadow: 0 0 0 6px rgba(37,99,235,0.06) inset;
-    }
-    .ring{
-      width:100%;
-      height:100%;
-      border-radius:50%;
-      border:6px solid rgba(99,102,241,0.12);
-      border-top-color: var(--accent);
-      animation: spin 1.05s linear infinite;
-      -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 8px), black 0);
-      mask: radial-gradient(farthest-side, transparent calc(100% - 8px), black 0);
-    }
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    /* Tagline */
-    .tagline {
-      font-size: clamp(13px, 2.2vw, 15px);
-      color: var(--muted);
-      max-width: 88%;
-      margin:0 auto;
-      line-height:1.35;
-    }
-
-    /* micro footer/progress hint */
-    .small {
-      margin-top:8px;
-      font-size:12px;
-      color: rgba(11,17,48,0.45);
-    }
-
-    /* Accessibility & reduced motion */
-    @media (prefers-reduced-motion: reduce) {
-      .splash { animation: none; opacity:1; transform:none; }
-      .ring { animation: none; }
-    }
-
-    /* Responsiveness */
-    @media (max-width:420px) {
-      .logo{ width:84px; height:84px; border-radius:16px; }
-      .spinner{ --size:56px; }
-      .splash{ padding: clamp(16px,5vw,22px); border-radius:14px; }
-    }
-  </style>
+</style>
 </head>
 <body>
-  <main class="splash" role="main" aria-labelledby="app-title" aria-busy="true">
-    <div class="logo" aria-hidden="false">
-      <!-- Replace logo.png with your actual image file -->
-      <img src="logo.png" alt="DigiLearn logo" decoding="async" draggable="false" />
-    </div>
 
-    <h1 id="app-title" class="title" aria-label="DigiLearn">
-      <span class="brand">DigiLearn</span>
-      <span class="dot" aria-hidden="true"></span>
-    </h1>
+<!-- Splash Screen -->
+<section id="splash" class="splash">
+  <div class="logo"><img src="logo.png" alt="DigiLearn Logo" style="width:70%;"></div>
+  <h1 class="title">DigiLearn <span class="dot" style="width:8px;height:8px;background:var(--accent);border-radius:50%;display:inline-block;"></span></h1>
+  <div class="spinner"></div>
+  <p class="tagline">Loading your learning experience…</p>
+</section>
 
-    <div class="loader-wrap" aria-hidden="false">
-      <div class="spinner" role="img" aria-label="Loading">
-        <div class="ring" aria-hidden="true"></div>
-      </div>
+<!-- Login/Welcome -->
+<section id="loginSection" class="wrapper hidden">
+  <div class="title">Welcome to DigiLearn</div>
+  <form id="loginForm">
+    <input type="text" id="loginUsername" placeholder="Username or Email" required>
+    <input type="password" id="loginPassword" placeholder="Password" required>
+    <button class="btn-primary" type="submit">Login</button>
+  </form>
+  <div id="loginMsg" class="message"></div>
+  <button class="btn-secondary" id="toSignupBtn">Create Account</button>
+  <button class="btn-secondary" id="toForgotBtn">Forgot Password?</button>
+</section>
 
-      <p class="tagline">Loading your learning experience…</p>
+<!-- Signup -->
+<section id="signupSection" class="wrapper hidden">
+  <h1>Create your DigiLearn account</h1>
+  <form id="signupForm" novalidate>
+    <input id="signupUsername" type="text" placeholder="Username (unique)" required>
+    <input id="signupEmail" type="email" placeholder="Email (optional)">
+    <input id="signupPassword" type="password" placeholder="Password (min 6)" required>
+    <input id="signupConfirm" type="password" placeholder="Confirm password" required>
+    <div>Security Question #1</div>
+    <input id="signupQ1" placeholder="Enter security question #1" required>
+    <input id="signupA1" placeholder="Answer #1" required>
+    <div>Security Question #2</div>
+    <input id="signupQ2" placeholder="Enter security question #2" required>
+    <input id="signupA2" placeholder="Answer #2" required>
+    <button class="btn-primary" type="submit">Create account</button>
+  </form>
+  <div id="signupMsg" class="message"></div>
+  <button class="btn-secondary" id="toLoginFromSignup">Back to Login</button>
+</section>
 
-      <div class="small" aria-hidden="true">Starting up — preparing lessons and resources</div>
-    </div>
-  </main>
+<!-- Forgot Password -->
+<section id="forgotSection" class="wrapper hidden">
+  <div class="title">Reset Your Password</div>
+  <input id="forgotUsername" placeholder="Username or Email">
+  <button class="btn-primary" id="checkUserBtn">Next</button>
+  <div id="questionsBox" class="hidden">
+    <div id="question1"></div>
+    <input id="answer1" placeholder="Answer #1">
+    <div id="question2"></div>
+    <input id="answer2" placeholder="Answer #2">
+    <button class="btn-primary" id="verifyBtn">Verify Answers</button>
+  </div>
+  <div id="resetBox" class="hidden">
+    <input id="newPass" type="password" placeholder="New Password">
+    <button class="btn-primary" id="resetBtn">Reset Password</button>
+  </div>
+  <div id="forgotMsg" class="message"></div>
+  <button class="btn-secondary" id="toLoginFromForgot">Back to Login</button>
+</section>
 
-  <script>
-    (function(){
-      'use strict';
+<!-- Dashboard/Profile -->
+<section id="dashboardSection" class="wrapper hidden">
+  <div class="title">Dashboard</div>
+  <p id="welcomeUser">Welcome, User!</p>
+  <button class="btn-primary" id="logoutBtn">Logout</button>
+</section>
 
-      // Redirect target: change here if you prefer index.html or another path
-      var REDIRECT_TARGET = 'welcome.html';
+<script type="module">
+import { getUser, setSession, initDB, userExists, createUser, updateUser } from './auth_v6_1.js';
 
-      // Timer length in milliseconds (10 seconds)
-      var REDIRECT_MS = 10000;
+// Utility
+const showSection = (id) => {
+  document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+}
+const showMessage = (el, text, type='error') => {
+  el.className='message';
+  void el.offsetWidth;
+  el.textContent=text;
+  el.classList.add('show', type);
+}
 
-      // Accessibility: announce remaining seconds via polite live region (progressive enhancement)
-      var live = document.createElement('div');
-      live.setAttribute('aria-live','polite');
-      live.style.position = 'absolute';
-      live.style.left = '-9999px';
-      live.style.width = '1px';
-      live.style.height = '1px';
-      live.style.overflow = 'hidden';
-      document.body.appendChild(live);
+// ---------------- Splash to Login ----------------
+setTimeout(() => { showSection('loginSection'); }, 3000); // 3s splash
 
-      var start = Date.now();
-      var remaining = Math.ceil(REDIRECT_MS / 1000);
-      live.textContent = 'App will open in ' + remaining + ' seconds.';
+// ---------------- Navigation ----------------
+document.getElementById('toSignupBtn').onclick = ()=> showSection('signupSection');
+document.getElementById('toForgotBtn').onclick = ()=> showSection('forgotSection');
+document.getElementById('toLoginFromSignup').onclick = ()=> showSection('loginSection');
+document.getElementById('toLoginFromForgot').onclick = ()=> showSection('loginSection');
 
-      // countdown only for UX — does not block redirect
-      var countdown = setInterval(function(){
-        var elapsed = Date.now() - start;
-        var secsLeft = Math.ceil((REDIRECT_MS - elapsed) / 1000);
-        if (secsLeft !== remaining) {
-          remaining = secsLeft;
-          live.textContent = remaining > 0
-            ? 'App will open in ' + remaining + ' seconds.'
-            : 'Opening app now.';
-        }
-        if (elapsed >= REDIRECT_MS) {
-          clearInterval(countdown);
-        }
-      }, 250);
+// ---------------- Login ----------------
+const loginForm = document.getElementById('loginForm');
+const loginMsg = document.getElementById('loginMsg');
+loginForm.addEventListener('submit', async e=>{
+  e.preventDefault();
+  const usernameOrEmail = document.getElementById('loginUsername').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  if(!usernameOrEmail||!password) return showMessage(loginMsg,'Please fill in all fields');
+  await initDB();
+  try {
+    const user = await getUser(usernameOrEmail);
+    if(!user) return showMessage(loginMsg,'User not found');
+    if(user.password!==password) return showMessage(loginMsg,'Incorrect password');
+    await setSession(user.username);
+    document.getElementById('welcomeUser').textContent = `Welcome, ${user.username}!`;
+    showSection('dashboardSection');
+  } catch(err) { console.error(err); showMessage(loginMsg,'Login failed'); }
+});
 
-      // Safety: if page is hidden or user navigates away, still attempt redirect when visible next time.
-      // Use visibility API to pause unnecessary work.
-      var visibilityHandler = function(){
-        // no heavy work to pause — kept for future-proofing PWA behavior
-      };
-      document.addEventListener('visibilitychange', visibilityHandler, {passive:true});
+// ---------------- Signup ----------------
+const signupForm = document.getElementById('signupForm');
+const signupMsg = document.getElementById('signupMsg');
+signupForm.addEventListener('submit', async e=>{
+  e.preventDefault();
+  const username = document.getElementById('signupUsername').value.trim();
+  const email = document.getElementById('signupEmail').value.trim();
+  const password = document.getElementById('signupPassword').value;
+  const confirm = document.getElementById('signupConfirm').value;
+  const q1 = document.getElementById('signupQ1').value.trim();
+  const a1 = document.getElementById('signupA1').value.trim();
+  const q2 = document.getElementById('signupQ2').value.trim();
+  const a2 = document.getElementById('signupA2').value.trim();
 
-      // Set the redirect
-      var redirectTimeout = setTimeout(function(){
-        // mark as not busy for assistive tech
-        var main = document.querySelector('.splash');
-        if (main) main.setAttribute('aria-busy','false');
+  if(!username) return showMessage(signupMsg,'Please choose username');
+  if(password.length<6) return showMessage(signupMsg,'Password too short');
+  if(password!==confirm) return showMessage(signupMsg,'Passwords do not match');
+  if(!q1||!q2||!a1||!a2) return showMessage(signupMsg,'Fill security questions');
 
-        // Use location.replace so splash isn't kept in history (native-like behavior)
-        try {
-          window.location.replace(REDIRECT_TARGET);
-        } catch (e) {
-          // fallback to assign if replace fails
-          window.location.href = REDIRECT_TARGET;
-        }
-      }, REDIRECT_MS);
+  if(await userExists(username)) return showMessage(signupMsg,'Username exists');
+  const result = await createUser({username,email,password,q1,a1,q2,a2,created:Date.now()});
+  if(!result.success) return showMessage(signupMsg,result.message||'Signup failed');
+  showMessage(signupMsg,'Account created successfully','success');
+  setTimeout(()=> showSection('loginSection'),900);
+});
 
-      // Extra: if user taps anywhere on the splash, try to go immediately (makes UX snappy)
-      document.querySelector('.splash').addEventListener('click', function(){
-        clearTimeout(redirectTimeout);
-        try { window.location.replace(REDIRECT_TARGET); } catch(e){ window.location.href = REDIRECT_TARGET; }
-      }, {passive:true});
+// ---------------- Forgot Password ----------------
+let currentUser = null;
+const forgotMsg = document.getElementById('forgotMsg');
+document.getElementById('checkUserBtn').onclick = async () => {
+  const uname = document.getElementById('forgotUsername').value.trim();
+  if(!uname) return showMessage(forgotMsg,'Enter username');
+  await initDB();
+  currentUser = await getUser(uname);
+  if(!currentUser) return showMessage(forgotMsg,'User not found');
+  document.getElementById('question1').textContent = currentUser.q1;
+  document.getElementById('question2').textContent = currentUser.q2;
+  document.getElementById('questionsBox').classList.remove('hidden');
+  showMessage(forgotMsg,'Answer your security questions','success');
+}
+document.getElementById('verifyBtn').onclick = ()=>{
+  if(!currentUser) return showMessage(forgotMsg,'No user selected');
+  const a1 = document.getElementById('answer1').value.trim().toLowerCase();
+  const a2 = document.getElementById('answer2').value.trim().toLowerCase();
+  if(a1!==currentUser.a1.toLowerCase()||a2!==currentUser.a2.toLowerCase()) return showMessage(forgotMsg,'Incorrect answers');
+  document.getElementById('resetBox').classList.remove('hidden');
+  showMessage(forgotMsg,'Verification successful','success');
+}
+document.getElementById('resetBtn').onclick = async ()=>{
+  if(!currentUser) return showMessage(forgotMsg,'No user selected');
+  const newPass = document.getElementById('newPass').value.trim();
+  if(newPass.length<6) return showMessage(forgotMsg,'Password too short');
+  currentUser.password = newPass;
+  await updateUser(currentUser);
+  showMessage(forgotMsg,'Password updated!','success');
+  setTimeout(()=> showSection('loginSection'),1500);
+}
 
-      // Prevent accidental text selection on long-tap in mobile
-      document.addEventListener('touchstart', function(){}, {passive:true});
-    })();
-  </script>
+// ---------------- Dashboard ----------------
+document.getElementById('logoutBtn').onclick = ()=>{
+  setSession(null);
+  showSection('loginSection');
+}
+</script>
 </body>
-</html>
-
+      </html>
