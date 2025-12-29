@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>DigiLearn Settings</title>
+<link rel="icon" href="logo.png">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2563eb">
+
+<style>
+:root {
+  --primary: #2563eb;
+  --secondary: #6a11cb;
+  --bg: #f7faff;
+  --card: #ffffff;
+  --text: #0f172a;
+  --muted: #64748b;
+  --radius: 18px;
+  --shadow: 0 8px 25px rgba(0,0,0,0.08);
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Segoe UI", sans-serif;
+  padding-bottom: 120px;
+  transition: background .3s, color .3s;
+}
+
+body.dark {
+  --bg: #121212;
+  --card: #1e1e1e;
+  --text: #e0e0e0;
+  --muted: #aaa;
+}
+
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(135deg, var(--secondary), var(--primary));
+  color: white;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  border-bottom-left-radius: 18px;
+  border-bottom-right-radius: 18px;
+  z-index: 20;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+}
+header h2 { font-size: 18px; flex: 1; text-align: center; }
+header img { width: 40px; height: 40px; border-radius: 12px; background: white; padding: 4px; object-fit: cover; }
+
+/* SETTINGS LIST */
+.settings-container {
+  max-width: 500px;
+  margin: 100px auto 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding: 0 15px;
+  transition: opacity .3s;
+}
+
+.setting-item {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 18px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: .2s;
+}
+.setting-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(0,0,0,0.12);
+}
+.setting-item img {
+  width: 28px;
+  height: 28px;
+  margin-left: 12px;
+}
+.setting-item input[type="radio"] {
+  margin-left: 10px;
+}
+
+/* ABOUT PAGE */
+#aboutContent {
+  background: var(--card);
+  padding: 18px 20px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  max-width: 500px;
+  margin: 100px auto 20px;
+  display: none;
+  line-height: 1.5;
+  white-space: pre-line;
+  color: var(--text);
+}
+
+/* CLOSE BUTTON */
+#aboutContent button {
+  margin-top: 15px;
+  padding: 10px 16px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+/* BOTTOM NAV */
+nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: white;
+  display: flex;
+  justify-content: space-around;
+  padding: 14px 0;
+  border-top-left-radius: 28px;
+  border-top-right-radius: 28px;
+  box-shadow: 0 -5px 28px rgba(0,0,0,0.18);
+  z-index: 30;
+}
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
+  width: 25%;
+  position: relative;
+  cursor: pointer;
+  transition: .25s;
+}
+.nav-item img {
+  width: 36px;
+  height: 36px;
+  margin-bottom: 4px;
+  opacity: .55;
+  transition: .25s;
+}
+.nav-item.active img {
+  opacity: 1;
+  transform: scale(1.15);
+}
+.nav-item.active { color: var(--primary); }
+.nav-item::after {
+  content: "";
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: var(--primary);
+  border-radius: 50%;
+  left: 50%;
+  bottom: 4px;
+  transform: translateX(-50%) scale(0);
+  opacity: 0;
+  transition: .3s;
+}
+.nav-item.active::after {
+  transform: translateX(-50%) scale(1);
+  opacity: 1;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <img src="logo.png" alt="DigiLearn Logo">
+  <h2>Settings</h2>
+</header>
+
+<div class="settings-container" id="settingsList">
+
+  <div class="setting-item" onclick="clearNotification()">
+    <span>Notification Settings</span>
+    <img src="settings.png" alt="Notifications">
+  </div>
+
+  <div class="setting-item" onclick="showPrivacy()">
+    <span>Privacy Settings</span>
+    <img src="settings.png" alt="Privacy">
+  </div>
+
+  <div class="setting-item">
+    <span>Theme</span>
+    <div>
+      <label><input type="radio" name="theme" value="light" checked> Light</label>
+      <label><input type="radio" name="theme" value="dark"> Dark</label>
+    </div>
+  </div>
+
+  <div class="setting-item" onclick="showAbout()">
+    <span>About</span>
+    <img src="settings.png" alt="About">
+  </div>
+
+</div>
+
+<div id="aboutContent"></div>
+
+<nav>
+  <div class="nav-item" onclick="location.href='dashboard.html'"><img src="home.png" alt="Home">Home</div>
+  <div class="nav-item" onclick="location.href='courses.html'"><img src="learn.png" alt="Learn">Learn</div>
+  <div class="nav-item active" onclick="location.href='settings.html'"><img src="settings.png" alt="Settings">Settings</div>
+  <div class="nav-item" onclick="location.href='profile.html'"><img src="profile.png" alt="Profile">Profile</div>
+</nav>
+
+<script>
+document.querySelectorAll(".nav-item").forEach(item=>{
+  item.addEventListener("click", ()=>{
+    document.querySelectorAll(".nav-item").forEach(x=>x.classList.remove("active"));
+    item.classList.add("active");
+  });
+});
+
+// Theme toggle
+document.querySelectorAll('input[name="theme"]').forEach(radio=>{
+  radio.addEventListener('change', (e)=>{
+    if(e.target.value === 'dark'){
+      document.body.classList.add('dark');
+    } else {
+      document.body.classList.remove('dark');
+    }
+  });
+});
+
+// Notification cleared
+function clearNotification(){
+  alert('');
+}
+
+// Privacy Settings
+function showPrivacy(){
+  alert('This is just a project created by UMYUK 300 level students for a Mobile Application assignment by Group H. All your data is stored locally on your device. No data is exposed online.');
+}
+
+// Show About Page
+function showAbout(){
+  const settingsList = document.getElementById('settingsList');
+  const aboutDiv = document.getElementById('aboutContent');
+  settingsList.style.display = 'none';
+  aboutDiv.style.display = 'block';
+  aboutDiv.innerHTML = `
+GROUP H Mobile Application Project
+-----------------------------------
+This project was created as an assignment for Mobile Application Development by UMYUK 300 level students.
+
+Team Members:
+- Musa Muhammad - U2/23/CSC/1210
+- Jibrin Habibu Muhammad - U2/23/CSC/1213
+- Kabir Abdullahi - U2/23/CSC/1238
+- Aliyu Rabiu Madugu - U2/23/CSC/1547
+- Samaila Shamsu - U2/23/CSC/1799
+- Mujittapha Habiba - U2/23/CSC/2355
+- Sani Babangida - U2/23/CSC/2815
+- Aminu Abdulwahab - U2/23/CSC/3054
+- Bello Abdurrahman Umar - U2/23/CSC/3069
+- Jamilu Sharifat Audi - U2/23/CSC/3165
+
+Project Goal:
+Build a functional mobile learning platform that runs entirely locally on the device.
+
+All data is stored on your device. No online storage is used.
+
+<button onclick="closeAbout()">Close</button>
+  `;
+}
+
+function closeAbout(){
+  document.getElementById('aboutContent').style.display = 'none';
+  document.getElementById('settingsList').style.display = 'flex';
+}
+</script>
+
+</body>
+</html>

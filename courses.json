@@ -1,0 +1,116 @@
+[
+  {
+    "id": "html-basics",
+    "title": "Introduction to HTML",
+    "category": "programming",
+    "thumbnail": "html.jpg",
+    "description": "Structure web pages with HTML. 10 hands-on lessons.",
+    "lessons": [
+      { "title": "HTML Basics", "content": "Learn what HTML is and how it structures a webpage." },
+      { "title": "HTML Elements", "content": "Understanding tags, elements, and attributes in HTML." },
+      { "title": "Headings & Paragraphs", "content": "How to use headings, paragraphs, and semantic structure." },
+      { "title": "Links & Images", "content": "Adding hyperlinks and embedding images in your page." },
+      { "title": "Lists & Tables", "content": "Create ordered, unordered lists and tables for data." },
+      { "title": "Forms & Inputs", "content": "Build forms with input fields, checkboxes, and buttons." },
+      { "title": "HTML Media", "content": "Embedding audio, video, and other media content." },
+      { "title": "HTML Semantic Tags", "content": "Use semantic HTML for accessibility and SEO." },
+      { "title": "HTML Best Practices", "content": "Writing clean, maintainable HTML code." },
+      { "title": "Mini HTML Project", "content": "Create a complete HTML webpage combining all learned skills." }
+    ]
+  },
+  {
+    "id": "css-mastery",
+    "title": "CSS Mastery",
+    "category": "design",
+    "thumbnail": "css.jpg",
+    "description": "Layouts, flexbox, grid, responsive styles.",
+    "lessons": [
+      { "title": "CSS Basics", "content": "Introduction to CSS and adding styles to HTML." },
+      { "title": "Selectors & Properties", "content": "Target elements and apply various CSS properties." },
+      { "title": "Box Model", "content": "Margins, padding, borders, and content layout." },
+      { "title": "Positioning Elements", "content": "Static, relative, absolute, and fixed positioning." },
+      { "title": "Flexbox Layout", "content": "Design flexible layouts using CSS Flexbox." },
+      { "title": "Grid Layout", "content": "Create complex layouts using CSS Grid." },
+      { "title": "Typography & Colors", "content": "Control fonts, sizes, colors, and text styling." },
+      { "title": "Transitions & Animations", "content": "Smoothly animate changes in CSS properties." },
+      { "title": "Responsive Design", "content": "Make websites look good on all devices using media queries." },
+      { "title": "Mini CSS Project", "content": "Style a web page combining Flexbox, Grid, and responsive techniques." }
+    ]
+  },
+  {
+    "id": "js-core",
+    "title": "JavaScript Core",
+    "category": "programming",
+    "thumbnail": "js.jpg",
+    "description": "Language essentials and interactive web programming.",
+    "lessons": [
+      { "title": "JavaScript Basics", "content": "Variables, data types, and basic operators." },
+      { "title": "Functions & Scope", "content": "Define functions and understand variable scope." },
+      { "title": "DOM Manipulation", "content": "Interact with HTML elements using the DOM." },
+      { "title": "Events", "content": "Handling clicks, inputs, and other user interactions." },
+      { "title": "Arrays & Objects", "content": "Store and manipulate data efficiently." },
+      { "title": "Loops & Conditions", "content": "Control program flow using loops and conditionals." },
+      { "title": "ES6 Features", "content": "Modern JavaScript: let, const, arrow functions, and template literals." },
+      { "title": "Fetch & API Calls", "content": "Request data from external APIs and handle responses." },
+      { "title": "Error Handling", "content": "Debug and handle errors with try/catch." },
+      { "title": "Mini JS Project", "content": "Create an interactive web application using JS." }
+    ]
+  },
+  {
+    "id": "python-fund",
+    "title": "Python Fundamentals",
+    "category": "programming",
+    "thumbnail": "python.jpg",
+    "description": "Basic programming with Python.",
+    "lessons": [
+      { "title": "Python Basics", "content": "Install Python and understand syntax basics." },
+      { "title": "Variables & Data Types", "content": "Work with strings, numbers, lists, and dictionaries." },
+      { "title": "Control Flow", "content": "If statements, loops, and boolean logic." },
+      { "title": "Functions", "content": "Define and call functions with arguments and return values." },
+      { "title": "Modules & Packages", "content": "Organize code using modules and import packages." },
+      { "title": "File Handling", "content": "Read and write files with Python." },
+      { "title": "Error & Exception Handling", "content": "Manage runtime errors gracefully." },
+      { "title": "Object-Oriented Programming", "content": "Classes, objects, inheritance, and encapsulation." },
+      { "title": "Python Libraries", "content": "Use libraries like math, datetime, and random." },
+      { "title": "Python Mini Project", "content": "Build a simple Python application." }
+    ]
+  },
+  {
+    "id": "uiux-intro",
+    "title": "UI/UX Intro",
+    "category": "design",
+    "thumbnail": "UI_UX.jpg",
+    "description": "User research, wireframes, prototyping.",
+    "lessons": [
+      { "title": "Introduction to UI/UX", "content": "Learn the difference between UI and UX design." },
+      { "title": "User Research", "content": "Methods to understand user needs and behaviors." },
+      { "title": "Wireframing Basics", "content": "Sketch and plan layouts effectively." },
+      { "title": "Prototyping", "content": "Build interactive prototypes to test designs." },
+      { "title": "Design Principles", "content": "Understand alignment, contrast, hierarchy, and consistency." },
+      { "title": "Typography & Color Theory", "content": "Use fonts and colors effectively in UI design." },
+      { "title": "UI Components", "content": "Design buttons, forms, and navigation elements." },
+      { "title": "UX Testing", "content": "Conduct usability tests to improve experience." },
+      { "title": "Responsive Design", "content": "Design interfaces for multiple devices and screens." },
+      { "title": "Mini UI/UX Project", "content": "Create a simple app interface from research to prototype." }
+    ]
+  },
+  {
+    "id": "react-begin",
+    "title": "React Beginner",
+    "category": "programming",
+    "thumbnail": "React.jpg",
+    "description": "Component-based UI with React.",
+    "lessons": [
+      { "title": "React Introduction", "content": "Learn what React is and why it’s used." },
+      { "title": "JSX Basics", "content": "Understand JSX syntax and embedding expressions." },
+      { "title": "Components & Props", "content": "Create reusable components and pass data via props." },
+      { "title": "State Management", "content": "Manage dynamic data with useState." },
+      { "title": "Event Handling", "content": "Handle user interactions in React." },
+      { "title": "Conditional Rendering", "content": "Render UI elements conditionally." },
+      { "title": "Lists & Keys", "content": "Render lists efficiently using keys." },
+      { "title": "useEffect Hook", "content": "Handle side effects with useEffect." },
+      { "title": "Routing Basics", "content": "Navigate between pages using React Router." },
+      { "title": "Mini React Project", "content": "Build a simple interactive React app." }
+    ]
+  }
+]

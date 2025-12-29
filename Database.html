@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>DigiLearn — IndexedDB Admin</title>
+<style>
+  :root{
+    --bg:#f4f8ff; --card:#fff; --accent:#2563eb; --muted:#64748b;
+    --text:#0f172a; --radius:14px; --shadow:0 10px 30px rgba(16,24,40,0.08);
+  }
+  *{box-sizing:border-box}
+  body{font-family:Inter, "Segoe UI", Roboto, Arial; background:var(--bg); color:var(--text); margin:0; padding:24px;}
+  h1{margin:0 0 16px;font-size:20px}
+  .top {display:flex;gap:12px;align-items:center;margin-bottom:18px;flex-wrap:wrap}
+  .btn {background:var(--accent); color:white; border:none; padding:10px 12px;border-radius:10px; cursor:pointer; box-shadow:var(--shadow);}
+  .btn.ghost {background:transparent;color:var(--accent);border:1px solid rgba(37,99,235,0.12);}
+  .card{background:var(--card); border-radius:var(--radius); padding:16px; box-shadow:var(--shadow); max-width:1100px;margin:auto}
+  table{width:100%;border-collapse:collapse;margin-top:12px}
+  th,td{padding:10px 12px;border-bottom:1px solid #eef2ff; text-align:left;font-size:13px}
+  th{background:#f0f6ff;font-weight:600}
+  .empty{padding:20px;text-align:center;color:var(--muted)}
+  .actions button{margin-right:6px}
+  .msg{margin-top:12px;font-size:14px}
+  .msg.success{color:green}
+  .msg.error{color:#d9534f}
+
+  /* modal */
+  .modal-backdrop{position:fixed;inset:0;background:rgba(8,12,20,0.45);display:none;align-items:center;justify-content:center;padding:20px;z-index:80}
+  .modal{width:100%;max-width:560px;background:var(--card);border-radius:12px;padding:18px;box-shadow:0 18px 40px rgba(2,6,23,0.35)}
+  .modal h3{margin:0 0 8px}
+  .row{display:flex;gap:10px}
+  .col{flex:1}
+  input, textarea, select{width:100%;padding:10px;border-radius:10px;border:1px solid #e6eefc;background:#fafcff;font-size:14px}
+  label{font-size:12px;color:var(--muted);display:block;margin-bottom:6px}
+  .small{font-size:12px;color:var(--muted)}
+  .danger{background:#ef4444}
+  .controls{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
+
+  /* file input hide */
+  input[type=file]{display:none}
+
+  @media (max-width:700px){
+    .row{flex-direction:column}
+    th,td{font-size:12px;padding:8px}
+  }
+</style>
+</head>
+<body>
+
+<h1>🔍 DigiLearn — IndexedDB Admin</h1>
+
+<div class="top">
+  <button class="btn" id="refreshBtn">Refresh</button>
+  <button class="btn ghost" id="exportBtn">Export JSON</button>
+  <label class="btn ghost" for="importFile">Import JSON</label>
+  <input id="importFile" type="file" accept="application/json">
+  <button class="btn ghost" id="wipeBtn">Wipe Users</button>
+  <div style="flex:1"></div>
+  <div class="small">DB: <strong>DigiLearnDB</strong> · Store: <strong>users</strong></div>
+</div>
+
+<div class="card">
+  <div id="status" class="msg"></div>
+
+  <table aria-describedby="user-table">
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>Password (SHA-256)</th>
+        <th>Q1</th>
+        <th>A1</th>
+        <th>Q2</th>
+        <th>A2</th>
+        <th>Logged In</th>
+        <th>Created</th>
+        <th style="width:150px">Actions</th>
+      </tr>
+    </thead>
+    <tbody id="rows">
+      <tr><td colspan="9" class="empty">Loading...</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Modal editor -->
+<div id="modal" class="modal-backdrop" role="dialog" aria-modal="true">
+  <div class="modal" role="document">
+    <h3 id="modalTitle">Edit User</h3>
+
+    <div style="margin-top:10px">
+      <label>Username</label>
+      <input id="editUsername" placeholder="username or email">
+    </div>
+
+    <div style="margin-top:10px">
+      <label>New Password (leave blank to keep)</label>
+      <input id="editPassword" placeholder="new password (will be hashed)">
+    </div>
+
+    <div style="margin-top:10px">
+      <label>Security Question 1</label>
+      <input id="editQ1" placeholder="question 1">
+      <label style="margin-top:8px">Answer 1</label>
+      <input id="editA1" placeholder="answer 1">
+    </div>
+
+    <div style="margin-top:10px">
+      <label>Security Question 2</label>
+      <input id="editQ2" placeholder="question 2">
+      <label style="margin-top:8px">Answer 2</label>
+      <input id="editA2" placeholder="answer 2">
+    </div>
+
+    <div class="controls">
+      <button class="btn ghost" id="cancelEdit">Cancel</button>
+      <button class="btn danger" id="deleteUserBtn">Delete</button>
+      <button class="btn" id="saveEditBtn">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Inside your <script> tag -->
+<script type="module">
+import { getAllUsers, getUser, addOrPutUser, deleteUserKey, clearStore } from './auth.js';
+
+const rowsEl = document.getElementById('rows');
+const statusEl = document.getElementById('status');
+const refreshBtn = document.getElementById('refreshBtn');
+const exportBtn = document.getElementById('exportBtn');
+const importFile = document.getElementById('importFile');
+const wipeBtn = document.getElementById('wipeBtn');
+
+let editingEmail = null; // old key if editing
+
+async function render() {
+  statusEl.textContent = '';
+  rowsEl.innerHTML = `<tr><td colspan="6" class="empty">Loading...</td></tr>`;
+
+  try {
+    const users = await getAllUsers();
+    if (!users || users.length === 0) {
+      rowsEl.innerHTML = `<tr><td colspan="6" class="empty">No users found.</td></tr>`;
+      return;
+    }
+
+    rowsEl.innerHTML = '';
+    users.sort((a,b)=> (a.dateCreated||'').localeCompare(b.dateCreated||'')).forEach(u=>{
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${escapeHtml(u.name)}</td>
+        <td>${escapeHtml(u.email)}</td>
+        <td style="font-family:monospace; font-size:12px;">${escapeHtml(u.password||'')}</td>
+        <td>${u.dateCreated ? new Date(u.dateCreated).toLocaleString() : '-'}</td>
+        <td class="actions">
+          <button class="btn ghost" data-email="${encodeURIComponent(u.email)}" data-action="edit">Edit</button>
+          <button class="btn ghost" data-email="${encodeURIComponent(u.email)}" data-action="delete">Delete</button>
+        </td>
+      `;
+      rowsEl.appendChild(tr);
+    });
+
+    rowsEl.querySelectorAll('button[data-action]').forEach(b=>{
+      b.addEventListener('click', async ()=>{
+        const action = b.getAttribute('data-action');
+        const email = decodeURIComponent(b.getAttribute('data-email'));
+        if(action==='edit') openEditor(email);
+        if(action==='delete') handleDelete(email);
+      });
+    });
+
+  } catch(err){
+    rowsEl.innerHTML = `<tr><td colspan="6" class="empty">Error loading DB: ${escapeHtml(String(err))}</td></tr>`;
+  }
+}
+
+function showStatus(msg,type=''){
+  statusEl.textContent = msg;
+  statusEl.className = 'msg ' + (type==='error' ? 'error':'success');
+  setTimeout(()=>{statusEl.textContent=''; statusEl.className='msg';},4000);
+}
+
+// ---------- Edit modal ----------
+const modal = document.getElementById('modal');
+const editNameEl = document.getElementById('editUsername'); // now represents name
+const editEmailEl = document.getElementById('editPassword'); // repurpose for email
+const cancelEditBtn = document.getElementById('cancelEdit');
+const saveEditBtn = document.getElementById('saveEditBtn');
+const deleteUserBtn = document.getElementById('deleteUserBtn');
+
+function openEditor(email){
+  (async()=>{
+    const user = await getUser(email);
+    if(!user){ showStatus('User not found','error'); return; }
+    editingEmail = user.email;
+    editNameEl.value = user.name || '';
+    editEmailEl.value = user.email || '';
+    modal.style.display = 'flex';
+  })();
+}
+
+cancelEditBtn.addEventListener('click',()=>modal.style.display='none');
+
+deleteUserBtn.addEventListener('click', async ()=>{
+  if(!editingEmail) return;
+  if(!confirm('Delete user "'+editingEmail+'"?')) return;
+  try{
+    await deleteUserKey(editingEmail);
+    modal.style.display='none';
+    showStatus('User deleted','success');
+    await render();
+  }catch(err){ showStatus('Delete failed: '+err,'error'); }
+});
+
+saveEditBtn.addEventListener('click', async ()=>{
+  const newName = editNameEl.value.trim();
+  const newEmail = editEmailEl.value.trim();
+  if(!newName || !newEmail){ alert('Name and Email are required'); return; }
+
+  try{
+    const original = await getUser(editingEmail);
+    if(!original){ showStatus('Original user missing','error'); modal.style.display='none'; return; }
+
+    // Check if email changed and exists
+    if(newEmail!==editingEmail){
+      const taken = await getUser(newEmail);
+      if(taken){ alert('Email already exists'); return; }
+    }
+
+    const updated = { ...original, name:newName, email:newEmail };
+    await addOrPutUser(updated);
+    if(newEmail!==editingEmail) await deleteUserKey(editingEmail);
+
+    modal.style.display='none';
+    showStatus('Saved successfully','success');
+    await render();
+  } catch(err){ showStatus('Save error: '+String(err),'error'); }
+});
+
+// ---------- Delete handler ----------
+async function handleDelete(email){
+  if(!confirm('Delete "'+email+'"?')) return;
+  try{
+    await deleteUserKey(email);
+    showStatus('Deleted '+email,'success');
+    await render();
+  }catch(err){ showStatus('Delete error: '+err,'error'); }
+}
+
+// ---------- Export / Import / Wipe ----------
+exportBtn.addEventListener('click', async ()=>{
+  try{
+    const users = await getAllUsers();
+    const blob = new Blob([JSON.stringify(users,null,2)],{type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href=url; a.download='digilearn_users_export.json';
+    document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    showStatus('Exported JSON','success');
+  }catch(err){ showStatus('Export failed: '+err,'error'); }
+});
+
+importFile.addEventListener('change', async e=>{
+  const file = e.target.files[0]; if(!file) return;
+  if(!confirm('Import will overwrite users from file. Continue?')){ e.target.value=''; return; }
+  const text = await file.text();
+  try{
+    const data = JSON.parse(text);
+    if(!Array.isArray(data)) throw 'Invalid JSON format';
+    for(const u of data){
+      if(!u.email) continue;
+      u.dateCreated = u.dateCreated || new Date().toISOString();
+      await addOrPutUser(u);
+    }
+    showStatus('Import complete','success');
+    render();
+  }catch(err){ showStatus('Import error: '+err,'error'); }
+  e.target.value='';
+});
+
+wipeBtn.addEventListener('click', async ()=>{
+  if(!confirm('Permanently wipe all users?')) return;
+  try{
+    await clearStore();
+    showStatus('Users wiped','success');
+    render();
+  }catch(err){ showStatus('Wipe failed: '+err,'error'); }
+});
+
+// ---------- Init ----------
+refreshBtn.addEventListener('click', render);
+render();
+
+// ---------- Utilities ----------
+function escapeHtml(s){ if(s==null) return ''; return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+</script>
+</body>
+</html>

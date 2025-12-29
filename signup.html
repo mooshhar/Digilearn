@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>DigiLearn — Sign Up</title>
+<style>
+:root {
+  --bg:#f6fbff; --card:#fff; --accent:#2563eb; --accent-soft: rgba(37,99,235,0.13);
+  --text:#0f172a; --muted:#6b7280; --radius:18px; --shadow:0 8px 24px rgba(16,24,40,0.08);
+  --transition:240ms cubic-bezier(.25,.45,.35,1);
+}
+body.dark {
+  --bg:#1f2937; --card:#111827; --accent:#3b82f6; --text:#f9fafb; --muted:#9ca3af;
+}
+*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial}
+html, body{height:100%;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+body{display:flex;flex-direction:column;align-items:center;padding:20px;min-height:100vh}
+.wrapper{
+  width:100%;max-width:420px;background:var(--card);border-radius:var(--radius);
+  padding:32px 28px;box-shadow:var(--shadow);text-align:center;
+}
+.logo{width:84px;height:84px;margin:0 auto 16px;background:linear-gradient(135deg,var(--accent-soft),rgba(37,99,235,0.04));border-radius:14px;display:flex;align-items:center;justify-content:center;box-shadow:0 12px 30px rgba(37,99,235,0.06)}
+.logo img{width:68%}
+h1{text-align:center;font-size:22px;margin-bottom:6px}
+p.lead{text-align:center;color:var(--muted);margin-bottom:20px}
+
+.form-group{position:relative;margin-bottom:16px}
+.input{width:100%;padding:14px 12px;border-radius:12px;border:1px solid rgba(0,0,0,0.08);background:#fafafa;color:var(--text);font-size:15px;transition:border var(--transition), box-shadow var(--transition)}
+body.dark .input{background:#0f1724;color:var(--text);border:1px solid rgba(255,255,255,0.06)}
+.input:focus{outline:none;border-color:var(--accent);box-shadow:0 6px 18px rgba(37,99,235,0.08)}
+
+.form-group label{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:14px;pointer-events:none;transition:all .25s}
+.input:focus + label,
+.input:not(:placeholder-shown) + label{top:-8px;font-size:12px;color:var(--accent);background:var(--card);padding:0 4px}
+
+.row{display:flex;gap:10px}
+.col{flex:1}
+
+.btn{width:100%;padding:14px;border:none;border-radius:12px;background:var(--accent);color:#fff;font-weight:600;font-size:15px;cursor:pointer;position:relative;overflow:hidden;transition:transform .15s ease}
+.btn:active{transform:scale(0.97)}
+.ripple{position:absolute;border-radius:50%;transform:scale(0);animation:ripple 560ms linear;background:rgba(255,255,255,0.45);pointer-events:none}
+@keyframes ripple{to{transform:scale(4);opacity:0}}
+
+.message{min-height:22px;margin-top:8px;font-weight:600;opacity:0;transform:translateY(6px);transition:all .28s}
+.message.show{opacity:1;transform:translateY(0)}
+.success{color:#059669}
+.error{color:#dc2626}
+
+.question-label{font-size:13px;font-weight:600;color:var(--muted);margin:10px 0 6px}
+.hidden{display:none}
+.note{text-align:center;font-size:13px;color:var(--muted);margin-top:14px}
+</style>
+</head>
+<body>
+
+<div class="wrapper">
+  <div class="logo"><img src="logo.png" alt="DigiLearn"></div>
+  <h1>Create your DigiLearn account</h1>
+  <p class="lead">Use a unique username — you'll use it to sign in.</p>
+
+  <form id="signupForm" novalidate>
+    <div class="form-group">
+      <input id="username" class="input" type="text" placeholder=" " required>
+      <label for="username">Username (unique)</label>
+      <div id="usernameMsg" class="message" style="font-size:12px;margin-top:4px;"></div>
+    </div>
+    <div class="form-group">
+      <input id="email" class="input" type="email" placeholder=" ">
+      <label for="email">Email (optional)</label>
+    </div>
+
+    <div class="row">
+      <div class="form-group col">
+        <input id="password" class="input" type="password" placeholder=" " required>
+        <label for="password">Password (min 6)</label>
+      </div>
+      <div class="form-group col">
+        <input id="confirm" class="input" type="password" placeholder=" " required>
+        <label for="confirm">Confirm password</label>
+      </div>
+    </div>
+
+    <div class="question-label">Security Question #1</div>
+    <select id="q1" class="input">
+      <option value="">Select a question…</option>
+      <option>What is your mother’s maiden name?</option>
+      <option>What was the name of your first pet?</option>
+      <option>What city were you born in?</option>
+      <option value="custom">Write my own question…</option>
+    </select>
+    <input id="q1custom" class="input hidden" placeholder="Enter custom question #1">
+    <input id="a1" class="input" placeholder="Answer to question #1" required>
+
+    <div class="question-label">Security Question #2</div>
+    <select id="q2" class="input">
+      <option value="">Select a question…</option>
+      <option>What is your favorite teacher’s name?</option>
+      <option>What is the name of your best friend?</option>
+      <option>What is your dream job?</option>
+      <option value="custom">Write my own question…</option>
+    </select>
+    <input id="q2custom" class="input hidden" placeholder="Enter custom question #2">
+    <input id="a2" class="input" placeholder="Answer to question #2" required>
+
+    <button id="signupBtn" class="btn" type="submit">Create account</button>
+  </form>
+
+  <div id="msg" class="message" aria-live="polite"></div>
+  <p class="note">Already have an account? <a href="welcome.html">Sign in</a></p>
+</div>
+
+<!-- Use module script -->
+<script type="module">
+import { userExists, createUser } from './auth_v6_1.js';
+
+const $ = id => document.getElementById(id);
+const msgEl = $('msg');
+const usernameMsg = $('usernameMsg');
+
+function showMessage(text,type='error'){
+  msgEl.className='message';
+  void msgEl.offsetWidth;
+  msgEl.textContent=text;
+  msgEl.classList.add(type,'show');
+}
+
+// Custom question toggle
+function handleCustom(sel, custom){
+  sel.addEventListener('change',()=>{
+    if(sel.value==='custom'){
+      custom.classList.remove('hidden');
+      custom.required=true;
+    } else {
+      custom.classList.add('hidden');
+      custom.required=false;
+    }
+  });
+}
+handleCustom($('q1'),$('q1custom'));
+handleCustom($('q2'),$('q2custom'));
+
+// Username live check
+$('username').addEventListener('input', async ()=>{
+  const u = $('username').value.trim();
+  if(!u){
+    usernameMsg.className='message';
+    usernameMsg.textContent='';
+    return;
+  }
+
+  const exists = await userExists(u);
+  if(exists){
+    usernameMsg.textContent='Username already taken';
+    usernameMsg.className='message error show';
+  } else {
+    usernameMsg.textContent='Username available';
+    usernameMsg.className='message success show';
+  }
+});
+
+// Submit signup
+$('signupForm').addEventListener('submit', async e=>{
+  e.preventDefault();
+
+  const username = $('username').value.trim();
+  const email = $('email').value.trim();
+  const password = $('password').value;
+  const confirm = $('confirm').value;
+
+  const q1 = $('q1').value==='custom' ? $('q1custom').value.trim() : $('q1').value;
+  const q2 = $('q2').value==='custom' ? $('q2custom').value.trim() : $('q2').value;
+
+  const a1 = $('a1').value.trim();
+  const a2 = $('a2').value.trim();
+
+  if(!username) return showMessage('Please choose a username.');
+  if(password.length<6) return showMessage('Password must be at least 6 characters.');
+  if(password!==confirm) return showMessage('Passwords do not match.');
+  if(!q1||!q2) return showMessage('Please select both security questions.');
+  if(!a1||!a2) return showMessage('Please answer both security questions.');
+
+  const exists = await userExists(username);
+  if(exists) return showMessage('Username already exists.');
+
+  const result = await createUser({
+    username, email, password, q1, a1, q2, a2,
+    created: Date.now()
+  });
+
+  if(!result.success){
+    return showMessage(result.message || 'Could not create account.');
+  }
+
+  showMessage('Account created successfully.','success');
+  setTimeout(()=> window.location.href='welcome.html',900);
+});
+</script>
+
+</body>
+</html>

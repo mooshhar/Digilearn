@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>Introduction to HTML - DigiLearn</title>
+<link rel="icon" href="logo.png">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2563eb">
+
+<style>
+:root {
+  --primary: #2563eb;
+  --secondary: #6a11cb;
+  --bg: #f7faff;
+  --card: #ffffff;
+  --text: #0f172a;
+  --muted: #64748b;
+  --radius: 16px;
+  --shadow: 0 8px 25px rgba(0,0,0,0.08);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; font-family:"Segoe UI", sans-serif; }
+body { background: var(--bg); color: var(--text); padding-bottom:120px; overflow-x:hidden; }
+
+/* FIXED HEADER */
+header {
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  background: linear-gradient(135deg, var(--secondary), var(--primary));
+  color:white;
+  padding:12px 16px;
+  display:flex;
+  align-items:center;
+  border-bottom-left-radius:18px;
+  border-bottom-right-radius:18px;
+  z-index:20;
+  box-shadow:0 5px 20px rgba(0,0,0,0.15);
+}
+header img { width:45px; height:45px; border-radius:18px; background:white; padding:5px; object-fit:cover; margin-right:12px; }
+header h2 { font-size:18px; }
+header p { opacity:.9; font-size:14px; }
+
+/* LESSON BUTTONS NAV */
+.lesson-nav {
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:10px;
+  margin:75px 10px 20px;
+}
+.lesson-btn {
+  width:45px;
+  height:45px;
+  background:white;
+  border-radius:12px;
+  box-shadow:var(--shadow);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  font-weight:700;
+  font-size:16px;
+  position:relative;
+  transition:.25s;
+}
+.lesson-btn.active { background:var(--primary); color:white; }
+.lesson-btn.locked { opacity:.3; cursor:not-allowed; }
+.lesson-btn.completed { background: #16a34a; color:white; }
+
+/* LESSON CONTENT */
+.lesson-content {
+  max-width:800px;
+  margin:0 auto 120px;
+  padding:15px;
+  background:white;
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  animation:fadeUp .4s ease;
+}
+.lesson-content h3 { margin-bottom:12px; font-size:18px; color:var(--primary);}
+.lesson-content p { margin-bottom:12px; line-height:1.5; }
+.lesson-content pre { background:#f1f5f9; padding:10px; border-radius:10px; overflow-x:auto; margin-bottom:12px; }
+.lesson-content code { color:#d6336c; }
+.lesson-content button {
+  background:var(--primary);
+  color:white;
+  border:none;
+  padding:12px 18px;
+  border-radius:12px;
+  font-size:15px;
+  cursor:pointer;
+  transition:.2s;
+}
+.lesson-content button:active { transform:scale(.95); }
+
+/* BOTTOM NAV */
+nav {
+  position:fixed;
+  bottom:0;
+  left:0;
+  width:100%;
+  background:white;
+  display:flex;
+  justify-content:space-around;
+  padding:14px 0;
+  border-top-left-radius:28px;
+  border-top-right-radius:28px;
+  box-shadow:0 -5px 28px rgba(0,0,0,0.18);
+  z-index:30;
+}
+.nav-item {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  font-size:13px;
+  font-weight:600;
+  width:25%;
+  position:relative;
+  cursor:pointer;
+  transition:.25s;
+}
+.nav-item img { width:36px; height:36px; margin-bottom:4px; opacity:.55; transition:.25s; }
+.nav-item.active img { opacity:1; transform:scale(1.15); }
+.nav-item.active { color:var(--primary); }
+.nav-item::after {
+  content:"";
+  position:absolute;
+  width:6px;
+  height:6px;
+  background:var(--primary);
+  border-radius:50%;
+  left:50%;
+  bottom:4px;
+  transform:translateX(-50%) scale(0);
+  opacity:0;
+  transition:.3s;
+}
+.nav-item.active::after {
+  transform:translateX(-50%) scale(1);
+  opacity:1;
+}
+
+/* ANIMATION */
+@keyframes fadeUp {
+  from { transform:translateY(20px); opacity:0; }
+  to { transform:translateY(0); opacity:1; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <img src="logo.png" alt="DigiLearn Logo">
+  <div>
+    <h2>Introduction to HTML</h2>
+    <p>Lesson-Based Learning</p>
+  </div>
+</header>
+
+<div class="lesson-nav" id="lessonNav"></div>
+<div class="lesson-content" id="lessonContent"></div>
+
+<nav>
+  <div class="nav-item active" onclick="location.href='dashboard.html'"><img src="home.png" alt="Home">Home</div>
+  <div class="nav-item" onclick="location.href='courses.html'"><img src="learn.png" alt="Learn">Learn</div>
+  <div class="nav-item" onclick="location.href='settings.html'"><img src="settings.png" alt="Settings">Settings</div>
+  <div class="nav-item" onclick="location.href='profile.html'"><img src="profile.png" alt="Profile">Profile</div>
+</nav>
+
+<script>
+
+
+// Lessons array in conversational tone for a beginner at UMYUK
+const lessons = [
+  {
+    title: "Lesson 1: HTML Basics",
+    content: `
+Hey there! Welcome to HTML. Think of HTML as the skeleton of a webpage. Without it, there’s nothing—just blank space.  
+It’s the structure that holds everything together: headings, paragraphs, images, and links.
+
+<b>Imagine this:</b> You’re designing a simple app interface. HTML gives you the boxes, titles, and placeholders. CSS will come later to make it pretty, and JavaScript to make it interactive.
+
+<b>Example:</b>
+<pre>
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;title&gt;My First Page&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;Welcome to UMYUK&lt;/h1&gt;
+  &lt;p&gt;This is your first webpage. You got this!&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+<b>Takeaway:</b> HTML = structure, CSS = style, JS = interaction. Easy, right? 
+`
+  },
+
+  {
+    title: "Lesson 2: Headings & Paragraphs",
+    content: `
+Alright! Now that you know the basics, let’s talk about headings and paragraphs. Headings are like chapter titles in a book. Paragraphs hold your explanations.
+
+<b>Think like this:</b> You’re making a course page.  
+<code>&lt;h1&gt;</code> is the course title, <code>&lt;h2&gt;</code> is each lesson title, and <code>&lt;p&gt;</code> contains your notes or explanation.
+
+<b>Example:</b>
+<pre>
+&lt;h1&gt;UI/UX Design at UMYUK&lt;/h1&gt;
+&lt;h2&gt;Wireframing Basics&lt;/h2&gt;
+&lt;p&gt;Wireframes help plan your app layout visually.&lt;/p&gt;
+</pre>
+
+<b>Tip:</b> Don’t use headings just to make text bigger—use them for structure!
+`
+  },
+
+  {
+    title: "Lesson 3: Links & Anchors",
+    content: `
+Links are like the signposts of the internet. They take you from one page to another or trigger actions.
+
+<b>Scenario:</b> Think of a “Start Lesson” button. It’s basically an anchor tag (<code>&lt;a&gt;</code>) styled as a button.
+
+<b>Example internal link:</b>
+<pre>
+&lt;a href="lesson2.html"&gt;Go to Lesson 2&lt;/a&gt;
+</pre>
+
+<b>Example external link:</b>
+<pre>
+&lt;a href="https://umyuk.edu.ng" target="_blank"&gt;Visit UMYUK Website&lt;/a&gt;
+</pre>
+
+<b>Pro tip:</b> Always include <code>alt</code> text for images you link. Accessibility matters!
+`
+  },
+
+  {
+    title: "Lesson 4: Images",
+    content: `
+Images make your page come alive. They show avatars, course cards, banners, etc.
+
+<b>Scenario:</b> Display your profile picture or a course thumbnail.
+
+<b>Example:</b>
+<pre>
+&lt;img src="avatar.png" alt="Your Profile Picture" width="120"&gt;
+</pre>
+
+<b>UX tip:</b> Always use <code>alt</code> text. It helps students with screen readers and also SEO!
+`
+  },
+
+  {
+    title: "Lesson 5: Lists",
+    content: `
+Lists are your best friend for organizing info—steps, menus, features, lessons.
+
+<b>Scenario:</b> You want a sidebar showing “HTML”, “CSS”, “JavaScript”.
+
+<b>Unordered list example:</b>
+<pre>
+&lt;ul&gt;
+  &lt;li&gt;HTML Basics&lt;/li&gt;
+  &lt;li&gt;Wireframing&lt;/li&gt;
+  &lt;li&gt;Prototyping&lt;/li&gt;
+&lt;/ul&gt;
+</pre>
+
+<b>Ordered list example:</b>
+<pre>
+&lt;ol&gt;
+  &lt;li&gt;Download materials&lt;/li&gt;
+  &lt;li&gt;Open PixelLab&lt;/li&gt;
+  &lt;li&gt;Start designing&lt;/li&gt;
+&lt;/ol&gt;
+</pre>
+
+<b>Why it’s cool:</b> Lists make content easy to scan and follow.
+`
+  },
+
+  {
+    title: "Lesson 6: Tables",
+    content: `
+Tables are like grids for your data—grades, attendance, or pricing info.
+
+<b>Scenario:</b> Showing your GPA or course scores.
+
+<b>Example:</b>
+<pre>
+&lt;table&gt;
+  &lt;tr&gt;
+    &lt;th&gt;Course&lt;/th&gt;
+    &lt;th&gt;Grade&lt;/th&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;CSC 2102&lt;/td&gt;
+    &lt;td&gt;A&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;
+</pre>
+
+<b>Tip:</b> Use tables only for data. Don’t try to make your page layout with tables anymore!
+`
+  },
+
+  {
+    title: "Lesson 7: Forms",
+    content: `
+Forms collect information—login, signup, feedback, search bars.
+
+<b>Scenario:</b> Changing your password or signing up for a UMYUK app.
+
+<b>Example:</b>
+<pre>
+&lt;form&gt;
+  &lt;label&gt;Email:&lt;/label&gt;
+  &lt;input type="email" placeholder="Enter email"&gt;
+
+  &lt;label&gt;Password:&lt;/label&gt;
+  &lt;input type="password" placeholder="Enter password"&gt;
+
+  &lt;button&gt;Login&lt;/button&gt;
+&lt;/form&gt;
+</pre>
+
+<b>UX tip:</b> Always pair labels with inputs for clarity. Students will thank you!
+`
+  },
+
+  {
+    title: "Lesson 8: Semantic HTML",
+    content: `
+Semantic HTML tells the browser and search engines what each part of your page means.
+
+<b>Scenario:</b> Designing a blog page for UCC or a course announcement page.
+
+<b>Common tags:</b>
+<pre>
+&lt;header&gt;
+&lt;nav&gt;
+&lt;section&gt;
+&lt;article&gt;
+&lt;footer&gt;
+</pre>
+
+<b>Why it matters:</b> SEO improves, screen readers can read your page better, and your code is easier to maintain.
+`
+  },
+
+  {
+    title: "Lesson 9: Multimedia",
+    content: `
+HTML lets you embed videos and audio right into your page.
+
+<b>Scenario:</b> Want to show PixelLab tutorial videos or UCC podcasts? Use HTML.
+
+<b>Video example:</b>
+<pre>
+&lt;video controls width="300"&gt;
+  &lt;source src="intro.mp4" type="video/mp4"&gt;
+&lt;/video&gt;
+</pre>
+
+<b>Audio example:</b>
+<pre>
+&lt;audio controls&gt;
+  &lt;source src="voice-note.mp3" type="audio/mpeg"&gt;
+&lt;/audio&gt;
+</pre>
+
+<b>Tip:</b> Always include controls so your users can play, pause, or adjust volume.
+`
+  },
+
+  {
+    title: "Lesson 10: Project Example",
+    content: `
+Now it’s time to practice! Let’s create a small webpage with headings, paragraphs, lists, images, and a form.
+
+<b>Scenario:</b> Build a mini landing page for your “DigiLearn UI/UX Starter Course”.
+
+<b>Example:</b>
+<pre>
+&lt;h1&gt;UI/UX Starter Course&lt;/h1&gt;
+
+&lt;img src="banner.jpg" alt="Course Banner" width="100%"&gt;
+
+&lt;p&gt;Welcome to the foundation of UI/UX design.&lt;/p&gt;
+
+&lt;h2&gt;What you will learn&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;Design thinking&lt;/li&gt;
+  &lt;li&gt;Wireframing&lt;/li&gt;
+  &lt;li&gt;Prototyping&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;a href="lesson1.html"&gt;Start Learning&lt;/a&gt;
+</pre>
+
+<b>Outcome:</b> By now, you understand the essential building blocks of web pages. You’re ready to build your own projects! 
+`
+  }
+];
+
+let completed = 0;
+
+// Render lesson buttons
+function renderLessonButtons() {
+  const nav = document.getElementById("lessonNav");
+  nav.innerHTML = "";
+  lessons.forEach((lesson, i) => {
+    const btn = document.createElement("div");
+    btn.className = "lesson-btn";
+    if(i <= completed) btn.classList.add("active");
+    if(i < completed) btn.classList.add("completed");
+    if(i > completed) btn.classList.add("locked");
+    btn.innerText = i+1;
+    btn.onclick = () => { if(i <= completed) showLesson(i); };
+    nav.appendChild(btn);
+  });
+}
+
+function showLesson(index) {
+  const content = document.getElementById("lessonContent");
+  content.innerHTML = `
+    <h3>${lessons[index].title}</h3>
+    <p>${lessons[index].content}</p>
+    ${index < lessons.length-1 ? "<button id='nextLesson'>Next Lesson</button>" : "<p>🎉 You completed all lessons!</p>"}
+  `;
+
+  // Update lesson buttons active/completed classes
+  document.querySelectorAll(".lesson-btn").forEach((b,i) => {
+    b.classList.toggle("active", i <= completed);
+    b.classList.toggle("completed", i < completed);
+  });
+
+  // Scroll to top whenever a new lesson loads
+  window.scrollTo({ top: 0, behavior: "smooth" });
+
+  // Attach event listener to the new "Next" button
+  const nextBtn = document.getElementById("nextLesson");
+  if(nextBtn){
+    nextBtn.addEventListener("click", ()=>{
+      completed = Math.max(completed, index+1);
+      renderLessonButtons();
+      showLesson(index+1);  // this will also scroll to top automatically
+    });
+  }
+}
+
+// Bottom nav click effect
+document.querySelectorAll(".nav-item").forEach(item=>{
+  item.addEventListener("click", ()=>{
+    document.querySelectorAll(".nav-item").forEach(x=>x.classList.remove("active"));
+    item.classList.add("active");
+  });
+});
+
+// Init
+renderLessonButtons();
+showLesson(0);
+
+</script>
+
+
+
+</body>
+</html>

@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>UI/UX Design – DigiLearn</title>
+<link rel="icon" href="logo.png">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2563eb">
+
+<style>
+:root {
+  --primary:#2563eb;
+  --secondary:#6a11cb;
+  --bg:#f7faff;
+  --card:#ffffff;
+  --text:#0f172a;
+  --muted:#64748b;
+  --radius:16px;
+  --shadow:0 8px 25px rgba(0,0,0,0.08);
+}
+
+*{margin:0;padding:0;box-sizing:border-box;font-family:"Segoe UI",sans-serif}
+body{background:var(--bg);color:var(--text);padding-bottom:120px;overflow-x:hidden}
+
+/* FIXED HEADER — (Your original unchanged) */
+header{
+  position:fixed;top:0;left:0;width:100%;
+  background:linear-gradient(135deg,var(--secondary),var(--primary));
+  color:white;padding:12px 16px;
+  display:flex;align-items:center;
+  border-bottom-left-radius:18px;
+  border-bottom-right-radius:18px;
+  z-index:20;box-shadow:0 5px 20px rgba(0,0,0,0.15)
+}
+header img{width:45px;height:45px;border-radius:18px;background:white;padding:5px;object-fit:cover;margin-right:12px}
+header h2{font-size:18px}
+header p{opacity:.9;font-size:14px}
+
+/* LESSON NAVIGATION BUTTONS */
+.lesson-nav{
+  display:flex;justify-content:center;flex-wrap:wrap;
+  gap:10px;margin:75px 10px 20px
+}
+.lesson-btn{
+  width:45px;height:45px;background:white;border-radius:12px;
+  box-shadow:var(--shadow);display:flex;align-items:center;
+  justify-content:center;cursor:pointer;font-weight:700;
+  font-size:16px;position:relative;transition:.25s
+}
+.lesson-btn.active{background:var(--primary);color:white}
+.lesson-btn.locked{opacity:.3;cursor:not-allowed}
+.lesson-btn.completed{background:#16a34a;color:white}
+
+/* NEW UI/UX LESSON CONTENT DESIGN */
+.lesson-content{
+  max-width:800px;margin:0 auto 120px;padding:18px;
+  background:white;border-radius:var(--radius);
+  box-shadow:var(--shadow);animation:fadeUp .4s ease
+}
+.lesson-content h3{
+  margin-bottom:12px;font-size:20px;
+  font-weight:700;color:var(--primary)
+}
+.lesson-content p{
+  margin-bottom:14px;line-height:1.6;
+  font-size:15px;color:var(--text)
+}
+.lesson-content .uiux-box{
+  background:#eef3ff;border-left:5px solid var(--primary);
+  padding:12px;border-radius:12px;margin-bottom:14px
+}
+.lesson-content pre{
+  background:#f1f5f9;padding:10px;border-radius:10px;
+  overflow-x:auto;margin-bottom:12px
+}
+.lesson-content button{
+  background:var(--primary);color:white;border:none;
+  padding:12px 18px;border-radius:12px;font-size:15px;
+  cursor:pointer;transition:.2s;margin-top:10px
+}
+.lesson-content button:active{transform:scale(.95)}
+
+/* BOTTOM NAV — (Your original unchanged) */
+nav{
+  position:fixed;bottom:0;left:0;width:100%;
+  background:white;display:flex;justify-content:space-around;
+  padding:14px 0;border-top-left-radius:28px;
+  border-top-right-radius:28px;box-shadow:0 -5px 28px rgba(0,0,0,0.18);z-index:30
+}
+.nav-item{
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;font-size:13px;font-weight:600;
+  width:25%;position:relative;cursor:pointer;transition:.25s
+}
+.nav-item img{width:36px;height:36px;margin-bottom:4px;opacity:.55;transition:.25s}
+.nav-item.active img{opacity:1;transform:scale(1.15)}
+.nav-item.active{color:var(--primary)}
+.nav-item::after{
+  content:"";position:absolute;width:6px;height:6px;
+  background:var(--primary);border-radius:50%;
+  left:50%;bottom:4px;transform:translateX(-50%) scale(0);
+  opacity:0;transition:.3s
+}
+.nav-item.active::after{
+  transform:translateX(-50%) scale(1);opacity:1
+}
+
+/* ANIMATION */
+@keyframes fadeUp{
+  from{transform:translateY(20px);opacity:0}
+  to{transform:translateY(0);opacity:1}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <img src="logo.png" alt="DigiLearn Logo">
+  <div>
+    <h2>UI/UX Design Course</h2>
+    <p>Lesson-Based Learning</p>
+  </div>
+</header>
+
+<div class="lesson-nav" id="lessonNav"></div>
+<div class="lesson-content" id="lessonContent"></div>
+
+<nav>
+  <div class="nav-item active" onclick="location.href='dashboard.html'"><img src="home.png" alt="Home">Home</div>
+  <div class="nav-item" onclick="location.href='courses.html'"><img src="learn.png" alt="Learn">Learn</div>
+  <div class="nav-item" onclick="location.href='settings.html'"><img src="settings.png" alt="Settings">Settings</div>
+  <div class="nav-item" onclick="location.href='profile.html'"><img src="profile.png" alt="Profile">Profile</div>
+</nav>
+
+<script>
+
+/* UI/UX COURSE LESSONS - CONVERSATIONAL TONE */
+const lessons = [
+  {
+    title:"Lesson 1: What is UI/UX?",
+    content:`
+    <div class="uiux-box">
+      UI (User Interface) is all about what your users see: colors, typography, buttons, and layouts. 
+      UX (User Experience) is about how your users feel when using the product—flow, clarity, and ease of use.
+    </div>
+    Great UI attracts users. Great UX keeps them engaged. The strongest digital products blend both seamlessly.
+    <br><br>
+    <b>Scenario:</b> Imagine the UMYUK student portal. UI is the dashboard colors, button style, and layout. UX is how easily you navigate, find your courses, and submit assignments.
+    <br><b>Tip:</b> Always consider UI and UX together; one without the other reduces effectiveness.
+    `
+  },
+  {
+    title:"Lesson 2: Design Thinking Process",
+    content:`
+    <b>Design thinking</b> is how top teams solve problems and create great experiences.
+    <br><br>
+    <strong>1. Empathize</strong> – Understand your users deeply. Observe how they interact with apps or websites.
+    <br><strong>2. Define</strong> – Identify the real problem users face. Don’t assume.
+    <br><strong>3. Ideate</strong> – Brainstorm creative solutions without judgment.
+    <br><strong>4. Prototype</strong> – Build simple mockups or wireframes.
+    <br><strong>5. Test</strong> – Validate your ideas with real users.
+    <br><br>
+    <b>Scenario:</b> You notice students struggle to find their course schedules. Using design thinking, you empathize, define the problem, ideate a solution, prototype a cleaner layout, and test it with students.
+    `
+  },
+  {
+    title:"Lesson 3: UI Principles",
+    content:`
+    <div class="uiux-box">
+      Consistency, Spacing, Hierarchy, Alignment, and Color Harmony are the pillars of clean interfaces.
+    </div>
+    Every screen should guide the user’s eyes: what should they click first? What’s most important?
+    <br><br>
+    <b>Scenario:</b> On a mobile course app, the “Start Lesson” button should stand out clearly above other text. Group related items, keep colors and spacing consistent, and maintain readable text hierarchy.
+    <br><b>Tip:</b> Don’t overcomplicate screens. Users should instinctively know where to click.
+    `
+  },
+  {
+    title:"Lesson 4: UX Principles",
+    content:`
+    <strong>Human-centered design</strong> focuses on removing friction.  
+    A good UX feels invisible: smooth, fast, predictable.
+    <br><br>
+    Test every flow: login → home → action → confirmation. Ensure it’s logical, intuitive, and fast.
+    <br><b>Scenario:</b> If students take three extra steps to download an assignment, the UX is poor. Simplify flows for efficiency.
+    `
+  },
+  {
+    title:"Lesson 5: Wireframing",
+    content:`
+    Wireframes are simple black-and-white layouts showing structure without decoration.
+    <br><br>
+    They help you focus on placement of elements, spacing, and flow before adding colors, icons, or images.
+    <br><b>Tools:</b> Figma, Adobe XD, Canva Wireframe Kits
+    <br><br>
+    <b>Scenario:</b> Sketch the UMYUK event app. Start with boxes for headers, menus, and buttons. Only later add colors, fonts, or icons.
+    `
+  },
+  {
+    title:"Lesson 6: Prototyping",
+    content:`
+    After wireframes, add visuals, interactions, and navigation paths.
+    <br><br>
+    Prototypes simulate real behavior: clicks, transitions, swipes, and gestures.
+    <br><b>Scenario:</b> Create a clickable login screen that moves to the dashboard. Test if the flow feels natural.
+    <br><b>Tip:</b> Share prototypes with students or friends. Their feedback shows how intuitive your design is.
+    `
+  },
+  {
+    title:"Lesson 7: Color & Typography",
+    content:`
+    Colors convey emotion. Typography ensures readability and hierarchy.
+    <br><br>
+    Use a maximum of 2–3 fonts per product. Choose colors that match the mood and provide sufficient contrast.
+    <br><b>Scenario:</b> A study app uses blue for calm, yellow for highlights, and white for backgrounds. Titles use bold sans-serif for clarity, body text is easy to read.
+    <br><b>Tip:</b> Always check accessibility. Ensure users with visual impairments can read your content.
+    `
+  },
+  {
+    title:"Lesson 8: UI Patterns",
+    content:`
+    UI patterns are common, reusable components: bottom tabs, sidebars, cards, navigation bars.
+    <br><br>
+    <b>Scenario:</b> Students know that bottom tabs usually switch between courses, notifications, and profile. Using familiar patterns reduces confusion.
+    <br><b>Tip:</b> Use standard patterns for predictable and easy-to-learn interfaces.
+    `
+  },
+  {
+    title:"Lesson 9: Accessibility",
+    content:`
+    Your app should include everyone.
+    <br><br>
+    Key points:
+    <ul>
+      <li>Large text</li>
+      <li>High contrast colors</li>
+      <li>Clear icons</li>
+      <li>Alt text for images</li>
+    </ul>
+    <br><b>Scenario:</b> If a visually impaired student accesses the UMYUK portal, alt text on icons and high contrast ensures they can navigate efficiently.
+    <br><b>Tip:</b> Accessibility is not optional. Always design for all users.
+    `
+  },
+  {
+    title:"Lesson 10: Final Mini Project",
+    content:`
+    Combine everything you learned and design a simple mobile app flow:
+    <ul>
+      <li>Splash screen</li>
+      <li>Login</li>
+      <li>Dashboard</li>
+      <li>One feature page</li>
+    </ul>
+    <br><b>Scenario:</b> Create a UMYUK event app. Apply UI principles, UX flows, colors, typography, wireframes, and patterns. Make it intuitive and visually appealing.
+    <br><b>Outcome:</b> You now understand how UI and UX work together to make apps usable, efficient, and beautiful.
+    `
+  }
+];
+
+let completed = 0;
+
+function renderLessonButtons(){
+  const nav=document.getElementById("lessonNav");
+  nav.innerHTML="";
+  lessons.forEach((lesson,i)=>{
+    const btn=document.createElement("div");
+    btn.className="lesson-btn";
+    if(i<=completed)btn.classList.add("active");
+    if(i<completed)btn.classList.add("completed");
+    if(i>completed)btn.classList.add("locked");
+    btn.innerText=i+1;
+    btn.onclick=()=>{ if(i<=completed) showLesson(i); };
+    nav.appendChild(btn);
+  });
+}
+
+function showLesson(index){
+  const content=document.getElementById("lessonContent");
+  
+  content.innerHTML=`
+    <h3>${lessons[index].title}</h3>
+    <p>${lessons[index].content}</p>
+    ${index<lessons.length-1 
+        ? "<button id='nextLesson'>Next Lesson</button>" 
+        : "<p>You have completed the full UI/UX course!</p>"}
+  `;
+
+  const nextBtn=document.getElementById("nextLesson");
+  if(nextBtn){
+    nextBtn.addEventListener("click", ()=>{
+      completed=Math.max(completed,index+1);
+      renderLessonButtons();
+      showLesson(index+1);
+      window.scrollTo({top:0,behavior:'smooth'});
+    });
+  }
+}
+
+document.querySelectorAll(".nav-item").forEach(item=>{
+  item.addEventListener("click", ()=>{
+    document.querySelectorAll(".nav-item").forEach(x=>x.classList.remove("active"));
+    item.classList.add("active");
+  });
+});
+
+renderLessonButtons();
+showLesson(0);
+
+
+function showLesson(index) {
+  const content = document.getElementById("lessonContent");
+
+  content.innerHTML = `
+    <h3>${lessons[index].title}</h3>
+    <p>${lessons[index].content}</p>
+    ${index < lessons.length - 1
+      ? "<button id='nextLesson'>Next Lesson</button>"
+      : "<p>You have completed all lessons!</p>"
+    }
+  `;
+
+  const nextBtn = document.getElementById("nextLesson");
+  if (nextBtn) {
+    // Remove any previous click listeners
+    nextBtn.replaceWith(nextBtn.cloneNode(true));
+    const newNextBtn = document.getElementById("nextLesson");
+    
+    newNextBtn.addEventListener("click", () => {
+      completed = Math.max(completed, index + 1);
+      renderLessonButtons();
+      showLesson(index + 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
+}
+
+// Navigation highlight
+document.querySelectorAll(".nav-item").forEach(item => {
+  item.addEventListener("click", () => {
+    document.querySelectorAll(".nav-item").forEach(x => x.classList.remove("active"));
+    item.classList.add("active");
+  });
+});
+
+// Initialize lessons
+renderLessonButtons();
+showLesson(0);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>Python Programming - DigiLearn</title>
+<link rel="icon" href="logo.png">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2563eb">
+
+<style>
+:root {
+  --primary: #2563eb;
+  --secondary: #6a11cb;
+  --bg: #f7faff;
+  --card: #ffffff;
+  --text: #0f172a;
+  --muted: #64748b;
+  --radius: 16px;
+  --shadow: 0 8px 25px rgba(0,0,0,0.08);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; font-family:"Segoe UI", sans-serif; }
+body { background: var(--bg); color: var(--text); padding-bottom:120px; overflow-x:hidden; }
+
+/* FIXED HEADER */
+header {
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  background: linear-gradient(135deg, var(--secondary), var(--primary));
+  color:white;
+  padding:12px 16px;
+  display:flex;
+  align-items:center;
+  border-bottom-left-radius:18px;
+  border-bottom-right-radius:18px;
+  z-index:20;
+  box-shadow:0 5px 20px rgba(0,0,0,0.15);
+}
+header img { width:45px; height:45px; border-radius:18px; background:white; padding:5px; object-fit:cover; margin-right:12px; }
+header h2 { font-size:18px; }
+header p { opacity:.9; font-size:14px; }
+
+/* LESSON BUTTONS NAV */
+.lesson-nav {
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:10px;
+  margin:75px 10px 20px;
+}
+.lesson-btn {
+  width:45px;
+  height:45px;
+  background:white;
+  border-radius:12px;
+  box-shadow:var(--shadow);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  font-weight:700;
+  font-size:16px;
+  position:relative;
+  transition:.25s;
+}
+.lesson-btn.active { background:var(--primary); color:white; }
+.lesson-btn.locked { opacity:.3; cursor:not-allowed; }
+.lesson-btn.completed { background: #16a34a; color:white; }
+
+/* LESSON CONTENT */
+.lesson-content {
+  max-width:800px;
+  margin:0 auto 120px;
+  padding:15px;
+  background:white;
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  animation:fadeUp .4s ease;
+}
+.lesson-content h3 { margin-bottom:12px; font-size:18px; color:var(--primary);}
+.lesson-content p { margin-bottom:12px; line-height:1.5; }
+.lesson-content pre { background:#f1f5f9; padding:10px; border-radius:10px; overflow-x:auto; margin-bottom:12px; }
+.lesson-content code { color:#d6336c; }
+.lesson-content button {
+  background:var(--primary);
+  color:white;
+  border:none;
+  padding:12px 18px;
+  border-radius:12px;
+  font-size:15px;
+  cursor:pointer;
+  transition:.2s;
+}
+.lesson-content button:active { transform:scale(.95); }
+
+/* BOTTOM NAV */
+nav {
+  position:fixed;
+  bottom:0;
+  left:0;
+  width:100%;
+  background:white;
+  display:flex;
+  justify-content:space-around;
+  padding:14px 0;
+  border-top-left-radius:28px;
+  border-top-right-radius:28px;
+  box-shadow:0 -5px 28px rgba(0,0,0,0.18);
+  z-index:30;
+}
+.nav-item {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  font-size:13px;
+  font-weight:600;
+  width:25%;
+  cursor:pointer;
+  transition:.25s;
+}
+.nav-item img { width:36px; height:36px; margin-bottom:4px; opacity:.55; transition:.25s; }
+.nav-item.active img { opacity:1; transform:scale(1.15); }
+.nav-item.active { color:var(--primary); }
+
+/* ANIMATION */
+@keyframes fadeUp {
+  from { transform:translateY(20px); opacity:0; }
+  to { transform:translateY(0); opacity:1; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <img src="logo.png" alt="DigiLearn Logo">
+  <div>
+    <h2>Python Programming</h2>
+    <p>Lesson-Based Learning</p>
+  </div>
+</header>
+
+<div class="lesson-nav" id="lessonNav"></div>
+<div class="lesson-content" id="lessonContent"></div>
+
+<nav>
+  <div class="nav-item active" onclick="location.href='dashboard.html'"><img src="home.png" alt="Home">Home</div>
+  <div class="nav-item" onclick="location.href='courses.html'"><img src="learn.png" alt="Learn">Learn</div>
+  <div class="nav-item" onclick="location.href='settings.html'"><img src="settings.png" alt="Settings">Settings</div>
+  <div class="nav-item" onclick="location.href='profile.html'"><img src="profile.png" alt="Profile">Profile</div>
+</nav>
+
+<script>
+// PYTHON LESSONS EXPANDED WITH SCENARIOS AND <b> TAGS
+const lessons = [
+  {
+    title: "Lesson 1: Introduction to Python",
+    content: `Python is a high-level, interpreted programming language known for its <b>readability</b> and <b>simplicity</b>. 
+It is widely used for web development, data analysis, AI, and scripting. Python code is easy to understand even for beginners because it uses <b>plain English-like syntax</b>.
+
+Example:
+<pre><code>print("Hello, Python!")  # Prints a greeting to the screen</code></pre>
+
+Scenario: Imagine you want to greet a user visiting your program. Python makes this simple with <b>print()</b>.`
+  },
+  {
+    title: "Lesson 2: Variables & Data Types",
+    content: `Variables are like <b>containers</b> that store information. You do not need to declare the type explicitly; Python figures it out automatically.
+
+Example:
+<pre><code>name = "Musa"   # string
+age = 25          # integer
+height = 5.8      # float</code></pre>
+
+Scenario: If you are building a profile form, you can store user information in variables and use it throughout your program.`
+  },
+  {
+    title: "Lesson 3: Input & Output",
+    content: `Python can collect input from users using <b>input()</b> and display output using <b>print()</b>.
+
+Example:
+<pre><code>user = input("Enter your name: ")
+print("Welcome", user)</code></pre>
+
+Scenario: Think of a program that asks for a user's favorite color and responds back with a personalized message. Input/output allows interaction with users.`
+  },
+  {
+    title: "Lesson 4: Conditions (if/else)",
+    content: `Conditions allow your program to make decisions using <b>if</b>, <b>elif</b>, and <b>else</b>.
+
+Example:
+<pre><code>x = 10
+if x > 5:
+    print("Greater")
+else:
+    print("Smaller")</code></pre>
+
+Scenario: Suppose you are creating a game where points are scored. You can use conditions to check if the player has enough points to advance to the next level.`
+  },
+  {
+    title: "Lesson 5: Loops",
+    content: `Loops help you <b>repeat tasks</b> without writing the same code multiple times.
+
+For Loop Example:
+<pre><code>for i in range(5):
+    print(i)  # Prints 0 to 4</code></pre>
+
+While Loop Example:
+<pre><code>count = 1
+while count <= 5:
+    print(count)
+    count += 1</code></pre>
+
+Scenario: Imagine you want to display all students’ names in a list automatically. Loops allow you to go through each name efficiently.`
+  },
+  {
+    title: "Lesson 6: Functions",
+    content: `Functions group <b>reusable code</b> to make programs organized.
+
+Example:
+<pre><code>def greet(name):
+    print("Hello", name)
+
+greet("Musa")  # Calls the function</code></pre>
+
+Scenario: You might have a program that sends a welcome message to multiple users. Instead of writing <b>print()</b> for each user, you can create a function and call it as needed.`
+  },
+  {
+    title: "Lesson 7: Lists",
+    content: `Lists store <b>multiple values</b> in one variable. They can contain strings, numbers, or even other lists.
+
+Example:
+<pre><code>fruits = ["apple", "banana", "mango"]
+print(fruits[1])  # Outputs: banana</code></pre>
+
+Scenario: Suppose you are building a shopping cart app. You can store all selected items in a list and display them dynamically.`
+  },
+  {
+    title: "Lesson 8: Dictionaries",
+    content: `Dictionaries store data in <b>key-value pairs</b> and are ideal for structured information.
+
+Example:
+<pre><code>student = {"name": "Musa", "level": 300}
+print(student["name"])  # Outputs: Musa</code></pre>
+
+Scenario: If you want to store user profiles with details like name, age, and email, dictionaries let you access information quickly by key.`
+  },
+  {
+    title: "Lesson 9: File Handling",
+    content: `Python can <b>read</b> and <b>write</b> files to store data permanently.
+
+Example:
+<pre><code># Write to a file
+with open("data.txt", "w") as f:
+    f.write("Hello File")
+
+# Read from a file
+with open("data.txt", "r") as f:
+    print(f.read())</code></pre>
+
+Scenario: Imagine a program that keeps user scores. You can save the scores to a file and load them the next time the program runs.`
+  },
+  {
+    title: "Lesson 10: Mini Project",
+    content: `Build a small Python app that asks the user for <b>name</b>, <b>age</b>, and <b>hobby</b>, then prints a <b>profile summary</b>.
+
+Example:
+<pre><code>name = input("Enter your name: ")
+age = int(input("Enter your age: "))
+hobby = input("Enter your hobby: ")
+
+print("Profile Summary:")
+print("Name:", name)
+print("Age:", age)
+print("Hobby:", hobby)</code></pre>
+
+Scenario: This project combines variables, input/output, and printing formatted information, giving you a practical feel for Python programming.`
+  }
+];
+
+let completed = 0;
+
+function renderLessonButtons() {
+  const nav = document.getElementById("lessonNav");
+  nav.innerHTML = "";
+  lessons.forEach((lesson, i) => {
+    const btn = document.createElement("div");
+    btn.className = "lesson-btn";
+    if(i <= completed) btn.classList.add("active");
+    if(i < completed) btn.classList.add("completed");
+    if(i > completed) btn.classList.add("locked");
+    btn.innerText = i+1;
+    btn.onclick = () => { if(i <= completed) showLesson(i); };
+    nav.appendChild(btn);
+  });
+}
+
+function showLesson(index) {
+  const content = document.getElementById("lessonContent");
+  content.innerHTML = `
+    <h3>${lessons[index].title}</h3>
+    <p>${lessons[index].content}</p>
+    ${index < lessons.length-1 ? "<button id='nextLesson'>Next Lesson</button>" : "<p>🎉 You completed all lessons!</p>"}
+  `;
+
+  // Scroll to top
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  // Adjust bottom padding dynamically
+  const lessonHeight = content.offsetHeight;
+  const windowHeight = window.innerHeight;
+  document.body.style.paddingBottom = Math.max(120, windowHeight - lessonHeight) + "px";
+
+  const nextBtn = document.getElementById("nextLesson");
+  if(nextBtn){
+    nextBtn.addEventListener("click", ()=>{
+      completed = Math.max(completed, index+1);
+      renderLessonButtons();
+      showLesson(index+1);
+    });
+  }
+}
+
+document.querySelectorAll(".nav-item").forEach(item=>{
+  item.addEventListener("click", ()=>{
+    document.querySelectorAll(".nav-item").forEach(x=>x.classList.remove("active"));
+    item.classList.add("active");
+  });
+});
+
+// Initialize
+renderLessonButtons();
+showLesson(0);
+
+window.addEventListener('resize', ()=>{
+  const content = document.getElementById("lessonContent");
+  const lessonHeight = content.offsetHeight;
+  const windowHeight = window.innerHeight;
+  document.body.style.paddingBottom = Math.max(120, windowHeight - lessonHeight) + "px";
+});
+</script>
+
+</body>
+</html>

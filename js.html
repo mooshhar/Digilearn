@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>JavaScript Fundamentals - DigiLearn</title>
+<link rel="icon" href="logo.png">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2563eb">
+
+<style>
+:root {
+  --primary: #2563eb;
+  --secondary: #6a11cb;
+  --bg: #f7faff;
+  --card: #ffffff;
+  --text: #0f172a;
+  --muted: #64748b;
+  --radius: 16px;
+  --shadow: 0 8px 25px rgba(0,0,0,0.08);
+}
+
+*{margin:0;padding:0;box-sizing:border-box;font-family:"Segoe UI",sans-serif;}
+body{background:var(--bg);color:var(--text);padding-bottom:120px;overflow-x:hidden;}
+
+header{
+  position:fixed;top:0;left:0;width:100%;
+  background:linear-gradient(135deg,var(--secondary),var(--primary));
+  color:white;padding:12px 16px;display:flex;align-items:center;
+  border-bottom-left-radius:18px;border-bottom-right-radius:18px;
+  z-index:20;box-shadow:0 5px 20px rgba(0,0,0,0.15);
+}
+header img{width:45px;height:45px;border-radius:18px;background:white;
+  padding:5px;object-fit:cover;margin-right:12px;}
+header h2{font-size:18px;} header p{opacity:.9;font-size:14px;}
+
+.lesson-nav{
+  display:flex;justify-content:center;flex-wrap:wrap;gap:10px;
+  margin:75px 10px 20px;
+}
+.lesson-btn{
+  width:45px;height:45px;background:white;border-radius:12px;
+  box-shadow:var(--shadow);display:flex;align-items:center;
+  justify-content:center;cursor:pointer;font-weight:700;font-size:16px;
+  position:relative;transition:.25s;
+}
+.lesson-btn.active{background:var(--primary);color:white;}
+.lesson-btn.locked{opacity:.3;cursor:not-allowed;}
+.lesson-btn.completed{background:#16a34a;color:white;}
+
+.lesson-content{
+  max-width:800px;margin:0 auto 120px;padding:15px;background:white;
+  border-radius:var(--radius);box-shadow:var(--shadow);
+  animation:fadeUp .4s ease;
+}
+.lesson-content h3{margin-bottom:12px;font-size:18px;color:var(--primary);}
+.lesson-content p{margin-bottom:12px;line-height:1.5;}
+.lesson-content pre{background:#f1f5f9;padding:10px;border-radius:10px;
+  overflow-x:auto;margin-bottom:12px;}
+.lesson-content code{color:#d6336c;}
+.lesson-content button{
+  background:var(--primary);color:white;border:none;padding:12px 18px;
+  border-radius:12px;font-size:15px;cursor:pointer;transition:.2s;
+}
+.lesson-content button:active{transform:scale(.95);}
+
+nav{
+  position:fixed;bottom:0;left:0;width:100%;background:white;
+  display:flex;justify-content:space-around;padding:14px 0;
+  border-top-left-radius:28px;border-top-right-radius:28px;
+  box-shadow:0 -5px 28px rgba(0,0,0,0.18);z-index:30;
+}
+.nav-item{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-size:13px;font-weight:600;width:25%;cursor:pointer;transition:.25s;
+}
+.nav-item img{width:36px;height:36px;margin-bottom:4px;opacity:.55;
+  transition:.25s;}
+.nav-item.active img{opacity:1;transform:scale(1.15);}
+.nav-item.active{color:var(--primary);}
+.nav-item::after{
+  content:"";position:absolute;width:6px;height:6px;background:var(--primary);
+  border-radius:50%;left:50%;bottom:4px;transform:translateX(-50%) scale(0);
+  opacity:0;transition:.3s;
+}
+.nav-item.active::after{transform:translateX(-50%) scale(1);opacity:1;}
+
+@keyframes fadeUp{
+  from{transform:translateY(20px);opacity:0;}
+  to{transform:translateY(0);opacity:1;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <img src="logo.png" alt="DigiLearn Logo">
+  <div>
+    <h2>JavaScript Fundamentals</h2>
+    <p>Learn JS Step-by-Step</p>
+  </div>
+</header>
+
+<div class="lesson-nav" id="lessonNav"></div>
+<div class="lesson-content" id="lessonContent"></div>
+
+<nav>
+  <div class="nav-item active" onclick="location.href='dashboard.html'"><img src="home.png">Home</div>
+  <div class="nav-item" onclick="location.href='courses.html'"><img src="learn.png">Learn</div>
+  <div class="nav-item" onclick="location.href='settings.html'"><img src="settings.png">Settings</div>
+  <div class="nav-item" onclick="location.href='profile.html'"><img src="profile.png">Profile</div>
+</nav>
+
+<script>
+
+
+// =============================
+//     JAVASCRIPT LESSONS
+// =============================
+const lessons = [
+  {
+    title:"Lesson 1: What is JavaScript?",
+    content:`
+JavaScript is the language that makes websites feel alive.  
+While HTML builds the structure and CSS handles the beauty, JavaScript adds motion, logic, and decision-making.
+
+Think about a login button.  
+When a user clicks it, something needs to *happen*:  
+• check the username  
+• validate the password  
+• show an error message if something is wrong  
+JavaScript controls all these steps.
+
+Real-world example:  
+Imagine a shop website. When a user adds shoes to the cart, JavaScript updates the cart icon instantly—no page reload needed.
+
+<pre>
+// A simple JavaScript action
+console.log("Hello World");
+alert("Welcome to DigiLearn!"); 
+</pre>
+
+This proves JavaScript talks directly to the browser and reacts instantly.
+    `
+  },
+
+  {
+    title:"Lesson 2: Variables",
+    content:`
+Variables are containers that hold information so your program can use it later.
+
+Picture a school locker.  
+You label your locker with your name, then store your books inside.  
+A variable works the same way:  
+• the name is the label  
+• the value is what you store inside  
+
+JavaScript uses two main variable keywords:  
+<strong>let</strong> → changeable value  
+<strong>const</strong> → value that should never change  
+
+<pre>
+// Student profile
+let studentName = "Musa";     // can change later
+const schoolName = "UMYUK";   // should remain constant
+
+console.log(studentName);
+</pre>
+
+If you try changing a <code>const</code>, JavaScript will complain.  
+This prevents mistakes and makes your code cleaner.
+    `
+  },
+
+  {
+    title:"Lesson 3: Data Types",
+    content:`
+JavaScript works with different kinds of data.  
+Imagine organizing items on shelves—each shelf stores a specific type to avoid confusion.
+
+Here are the major types:
+
+• <strong>String</strong> → text  
+• <strong>Number</strong> → any digits (in JS, no distinction between int & float)  
+• <strong>Boolean</strong> → true/false decisions  
+• <strong>Object</strong> → complex data grouped together  
+• <strong>Array</strong> → list of multiple values  
+• <strong>null</strong> → empty on purpose  
+• <strong>undefined</strong> → created but not yet assigned  
+
+<pre>
+let price = 1500;         // number
+let username = "Master";  // string
+let loggedIn = true;      // boolean
+let skills = ["HTML", "CSS", "JS"];  // array
+let profile = {name:"Musa", level:300}; // object
+</pre>
+
+In real apps, these data types work together to create full systems—like profiles, dashboards, carts, and more.
+    `
+  },
+
+  {
+    title:"Lesson 4: Operators",
+    content:`
+Operators let you perform actions—just like calculators and logic gates.
+
+Think of them as tools that help your code decide or compute something.
+
+<strong>Examples of operators:</strong>  
+• arithmetic → +, -, *, /  
+• comparison → ==, ===, >, <  
+• logical → &&, ||  
+
+Scenario:  
+You’re checking if a user is old enough to access a page.
+
+<pre>
+let age = 18;
+
+if(age >= 18){
+  console.log("Access granted");
+}
+</pre>
+
+Another example—adding prices together:  
+<pre>
+let itemPrice = 1500;
+let quantity = 2;
+let total = itemPrice * quantity;
+
+console.log(total); // 3000
+</pre>
+    `
+  },
+
+  {
+    title:"Lesson 5: Functions",
+    content:`
+Functions are reusable blocks of code—like machines that perform a specific task whenever you switch them on.
+
+Imagine a fingerprint sensor in a phone.  
+Every time a user taps, it performs the same task: verify.
+
+Functions behave exactly like that.
+
+<pre>
+function greet(){
+  console.log("Welcome to JavaScript!");
+}
+
+greet(); // calling the function
+</pre>
+
+Functions help you avoid repeating the same code again and again.  
+You just write it once and reuse it anytime.
+    `
+  },
+
+  {
+    title:"Lesson 6: Arrays",
+    content:`
+Arrays store multiple values in a single variable.  
+Think of them like a row of chairs—arranged in order and accessible by their position (index).
+
+Index always starts from 0.
+
+<pre>
+let courses = ["HTML", "CSS", "JavaScript"];
+
+console.log(courses[0]); // HTML
+console.log(courses[2]); // JavaScript
+</pre>
+
+Arrays are used everywhere online—like storing product lists, menu items, chat messages, or notifications.
+    `
+  },
+
+  {
+    title:"Lesson 7: Objects",
+    content:`
+Objects help group related information together like a real-world profile.
+
+Example: A student profile page in DigiLearn.
+
+<pre>
+let user = {
+  name: "Musa",
+  level: 300,
+  dept: "Computer Science",
+  active: true
+};
+
+console.log(user.name);
+</pre>
+
+Objects become extremely powerful when combined with arrays—like a list of students, products, posts, or tasks.
+    `
+  },
+
+  {
+    title:"Lesson 8: DOM Manipulation",
+    content:`
+DOM stands for <strong>Document Object Model</strong>.  
+It is the bridge between JavaScript and the webpage.
+
+Imagine the DOM as a digital skeleton of the page.  
+JavaScript can use this skeleton to:
+
+• change text  
+• edit styles  
+• hide or show elements  
+• update content instantly  
+
+Example:  
+A button that changes a title instantly.
+
+HTML:  
+<pre>
+<h1 id="title">Welcome</h1>
+</pre>
+
+JavaScript:  
+<pre>
+document.getElementById("title").innerText = "Updated!";
+</pre>
+
+This is how modern, interactive UIs are built.
+    `
+  },
+
+  {
+    title:"Lesson 9: Events",
+    content:`
+Events are actions triggered by the user or the system.
+
+Examples:  
+• Clicking a button  
+• Typing in an input  
+• Scrolling the page  
+• Loading the website  
+
+In UI/UX design, events determine how the interface responds.
+
+Example: A button that shows an alert.
+
+<pre>
+document.getElementById("btn").onclick = function(){
+  alert("Button clicked!");
+}
+</pre>
+
+Events help create responsive, smooth user experiences.
+    `
+  },
+
+  {
+    title:"Lesson 10: Mini Project",
+    content:`
+In this mini-project, you will create an interactive counter.
+
+The counter will:  
+• increase when the “+” button is clicked  
+• decrease when the “–” button is clicked  
+• show the updated value instantly  
+
+This small project teaches DOM manipulation, events, variables, and logic—all working together like a real app component.
+    `
+  }
+];
+
+
+let completed = 0;
+
+// Render lesson buttons
+function renderLessonButtons() {
+  const nav = document.getElementById("lessonNav");
+  nav.innerHTML = "";
+  lessons.forEach((lesson, i) => {
+    const btn = document.createElement("div");
+    btn.className = "lesson-btn";
+    if(i <= completed) btn.classList.add("active");
+    if(i < completed) btn.classList.add("completed");
+    if(i > completed) btn.classList.add("locked");
+    btn.innerText = i+1;
+    btn.onclick = () => { if(i <= completed) showLesson(i); };
+    nav.appendChild(btn);
+  });
+}
+
+// Show lesson content
+function showLesson(index) {
+  const content = document.getElementById("lessonContent");
+  content.innerHTML = `
+    <h3>${lessons[index].title}</h3>
+    <p>${lessons[index].content}</p>
+    ${
+      index < lessons.length-1
+      ? "<button id='nextLesson'>Next Lesson</button>"
+      : "<p>🎉 You completed all lessons!</p>"
+    }
+  `;
+
+  document.querySelectorAll(".lesson-btn").forEach((b,i)=>{
+    b.classList.toggle("active", i <= completed);
+    b.classList.toggle("completed", i < completed);
+  });
+
+  const nextBtn = document.getElementById("nextLesson");
+  if(nextBtn){
+    nextBtn.addEventListener("click", ()=>{
+      completed = Math.max(completed, index+1);
+      renderLessonButtons();
+      showLesson(index+1);
+    });
+  }
+}
+
+// Bottom nav effect
+document.querySelectorAll(".nav-item").forEach(item=>{
+  item.addEventListener("click", ()=>{
+    document.querySelectorAll(".nav-item").forEach(x=>x.classList.remove("active"));
+    item.classList.add("active");
+  });
+});
+
+// Init
+renderLessonButtons();
+showLesson(0);
+</script>
+
+</body>
+</html>

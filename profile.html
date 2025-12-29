@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>DigiLearn Profile</title>
+<link rel="icon" href="logo.png">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2563eb">
+<style>
+:root {
+  --primary: #2563eb;
+  --secondary: #6a11cb;
+  --bg: #f7faff;
+  --card: #ffffff;
+  --text: #0f172a;
+  --muted: #64748b;
+  --radius: 18px;
+  --shadow: 0 8px 25px rgba(0,0,0,0.08);
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Segoe UI", sans-serif;
+  padding-bottom: 120px;
+  transition: background .3s, color .3s;
+}
+
+body.dark {
+  --bg: #121212;
+  --card: #1e1e1e;
+  --text: #e0e0e0;
+  --muted: #aaa;
+}
+
+header {
+  position: fixed;
+  top: 0; left: 0; width: 100%;
+  background: linear-gradient(135deg, var(--secondary), var(--primary));
+  color: white;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  border-bottom-left-radius: 18px;
+  border-bottom-right-radius: 18px;
+  z-index: 20;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+}
+header h2 { font-size: 18px; flex: 1; text-align: center; }
+header img { width: 40px; height: 40px; border-radius: 12px; background: white; padding: 4px; object-fit: cover; }
+
+.profile-card {
+  max-width: 520px;
+  margin: 100px auto 20px;
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 30px 25px;
+  text-align: center;
+  transition: transform .3s, box-shadow .3s;
+}
+.profile-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 32px rgba(0,0,0,0.15);
+}
+.profile-card img.avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid var(--primary);
+  margin-bottom: 20px;
+  transition: transform .3s;
+}
+.profile-card img.avatar:hover { transform: scale(1.05); }
+.profile-card h3 { font-size: 22px; margin-bottom: 15px; font-weight: 600; }
+.profile-card p.bio { font-size: 14px; color: var(--muted); margin-bottom: 25px; line-height: 1.6; }
+
+.profile-card .action-btn {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.profile-card .action-btn button {
+  flex: 1 1 45%;
+  max-width: 200px;
+  padding: 14px 0;
+  font-size: 15px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: .2s;
+  color: white;
+}
+.profile-card .edit { background: #f59e0b; }
+.profile-card .logout { background: #ef4444; }
+.profile-card .darkmode { background: #10b981; }
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 50;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.6);
+  justify-content: center; align-items: center;
+}
+.modal-content {
+  background: var(--card);
+  padding: 25px;
+  border-radius: var(--radius);
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  position: relative;
+}
+.modal-content input {
+  width: 100%; margin: 10px 0; padding: 12px 14px;
+  border-radius: 12px; border: 1px solid #ccc; font-size: 15px;
+}
+.modal-content button {
+  margin-top: 12px;
+  padding: 12px 20px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  background: var(--primary);
+  color: white;
+  font-size: 15px;
+}
+
+nav {
+  position: fixed;
+  bottom: 0; left: 0; width: 100%;
+  background: var(--card);
+  display: flex;
+  justify-content: space-around;
+  padding: 14px 0;
+  border-top-left-radius: 28px;
+  border-top-right-radius: 28px;
+  box-shadow: 0 -5px 28px rgba(0,0,0,0.18);
+  z-index: 30;
+}
+.nav-item {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 600;
+  width: 25%; position: relative; cursor: pointer; transition: .25s;
+}
+.nav-item img {
+  width: 36px; height: 36px; margin-bottom: 4px; opacity: .55;
+  transition: .25s;
+}
+.nav-item.active img { opacity: 1; transform: scale(1.15); }
+.nav-item.active { color: var(--primary); }
+.nav-item::after {
+  content: "";
+  position: absolute;
+  width: 6px; height: 6px;
+  background: var(--primary);
+  border-radius: 50%;
+  left: 50%;
+  bottom: 4px;
+  transform: translateX(-50%) scale(0);
+  opacity: 0;
+  transition: .3s;
+}
+.nav-item.active::after { transform: translateX(-50%) scale(1); opacity: 1; }
+</style>
+</head>
+<body>
+
+<header>
+  <img src="logo.png" alt="DigiLearn Logo">
+  <h2>Profile</h2>
+</header>
+
+<div class="profile-card">
+  <img src="avater.png" alt="Profile Avatar" class="avatar">
+  <h3>User Name</h3>
+  <p class="bio">Bio info here...</p>
+
+  <div class="action-btn">
+    <button class="edit">Edit Profile</button>
+    <button class="darkmode">Toggle Dark Mode</button>
+    <button class="logout">Logout</button>
+  </div>
+</div>
+
+<div class="modal" id="editModal">
+  <div class="modal-content">
+    <h3>Edit Profile</h3>
+    <input type="text" id="editUsername" placeholder="Username">
+    <input type="email" id="editEmail" placeholder="Email">
+    <button id="saveProfile">Save Changes</button>
+  </div>
+</div>
+
+<nav>
+  <div class="nav-item" onclick="location.href='dashboard.html'"><img src="home.png" alt="Home">Home</div>
+  <div class="nav-item" onclick="location.href='courses.html'"><img src="learn.png" alt="Learn">Learn</div>
+  <div class="nav-item" onclick="location.href='settings.html'"><img src="settings.png" alt="Settings">Settings</div>
+  <div class="nav-item active" onclick="location.href='profile.html'"><img src="profile.png" alt="Profile">Profile</div>
+</nav>
+
+<script type="module">
+import { getUser, updateUser, initDB } from './auth_v6_1.js';
+
+const profileNameEl = document.querySelector(".profile-card h3");
+const profileBioEl = document.querySelector(".profile-card .bio");
+const editBtn = document.querySelector(".profile-card .edit");
+const darkBtn = document.querySelector(".profile-card .darkmode");
+const logoutBtn = document.querySelector(".profile-card .logout");
+const editModal = document.getElementById("editModal");
+const editUsernameInput = document.getElementById("editUsername");
+const editEmailInput = document.getElementById("editEmail");
+const saveProfileBtn = document.getElementById("saveProfile");
+
+// ------------------
+// Current User from IndexedDB (Settings store)
+async function getCurrentUser() {
+  const db = await initDB();
+  return new Promise((resolve, reject)=>{
+    const tx = db.transaction('settings','readonly');
+    const store = tx.objectStore('settings');
+    const req = store.get('currentUser');
+    req.onsuccess = ()=>resolve(req.result?.value || null);
+    req.onerror = ()=>reject(req.error);
+  });
+}
+
+async function setCurrentUser(username) {
+  const db = await initDB();
+  return new Promise((resolve,reject)=>{
+    const tx = db.transaction('settings','readwrite');
+    const store = tx.objectStore('settings');
+    store.put({key:'currentUser', value:username});
+    tx.oncomplete = ()=>resolve();
+    tx.onerror = ()=>reject(tx.error);
+  });
+}
+
+// ------------------
+// Load Profile
+let currentUser = null;
+async function loadProfile() {
+  const currentUsername = await getCurrentUser();
+  if(!currentUsername) return location.href='welcome.html';
+  currentUser = await getUser(currentUsername);
+  if(!currentUser) return location.href='welcome.html';
+
+  profileNameEl.textContent = currentUser.username;
+  profileBioEl.textContent = currentUser.otherData?.bio || 'No bio provided';
+
+  // Dark mode
+  const darkMode = await getSetting(currentUser.username,'darkMode');
+  if(darkMode==='true') document.body.classList.add('dark');
+}
+loadProfile();
+
+// ------------------
+// Edit Profile
+editBtn.onclick = () => {
+  editUsernameInput.value = currentUser.username;
+  editEmailInput.value = currentUser.email || '';
+  editModal.style.display = 'flex';
+};
+
+saveProfileBtn.onclick = async () => {
+  currentUser.username = editUsernameInput.value.trim() || currentUser.username;
+  currentUser.email = editEmailInput.value.trim() || currentUser.email;
+  try {
+    await updateUser(currentUser);
+    profileNameEl.textContent = currentUser.username;
+    await setCurrentUser(currentUser.username);
+    editModal.style.display = 'none';
+    alert('Profile updated successfully!');
+  } catch(err) {
+    console.error(err);
+    alert('Failed to update profile.');
+  }
+};
+
+editModal.addEventListener('click', e=>{
+  if(e.target===editModal) editModal.style.display='none';
+});
+
+// ------------------
+// Dark Mode
+darkBtn.onclick = async ()=>{
+  document.body.classList.toggle('dark');
+  await saveSetting(currentUser.username,'darkMode', document.body.classList.contains('dark') ? 'true':'false');
+};
+
+// ------------------
+// Logout
+logoutBtn.onclick = async ()=>{
+  await saveSetting(currentUser.username,'currentUser','');
+  location.href='welcome.html';
+};
+
+// ------------------
+// Settings helpers
+async function saveSetting(username,key,value){
+  const db = await initDB();
+  return new Promise((resolve,reject)=>{
+    const tx = db.transaction('settings','readwrite');
+    const store = tx.objectStore('settings');
+    store.put({key:`${username}_${key}`, value});
+    tx.oncomplete = ()=>resolve();
+    tx.onerror = ()=>reject(tx.error);
+  });
+}
+async function getSetting(username,key){
+  const db = await initDB();
+  return new Promise((resolve,reject)=>{
+    const tx = db.transaction('settings','readonly');
+    const store = tx.objectStore('settings');
+    const req = store.get(`${username}_${key}`);
+    req.onsuccess = ()=>resolve(req.result?.value || null);
+    req.onerror = ()=>reject(req.error);
+  });
+}
+
+// ------------------
+// Bottom nav toggle
+document.querySelectorAll(".nav-item").forEach(item=>{
+  item.addEventListener('click',()=>{
+    document.querySelectorAll(".nav-item").forEach(x=>x.classList.remove('active'));
+    item.classList.add('active');
+  });
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>CSS Mastery – DigiLearn</title>
+<link rel="icon" href="logo.png">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2563eb">
+
+<style>
+:root {
+  --primary: #2563eb;
+  --secondary: #6a11cb;
+  --bg: #f7faff;
+  --card: #ffffff;
+  --text: #0f172a;
+  --muted: #64748b;
+  --radius: 16px;
+  --shadow: 0 8px 25px rgba(0,0,0,0.08);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; font-family:"Segoe UI", sans-serif; }
+body { background: var(--bg); color: var(--text); padding-bottom:120px; overflow-x:hidden; }
+
+/* FIXED HEADER */
+header {
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  background: linear-gradient(135deg, var(--secondary), var(--primary));
+  color:white;
+  padding:12px 16px;
+  display:flex;
+  align-items:center;
+  border-bottom-left-radius:18px;
+  border-bottom-right-radius:18px;
+  z-index:20;
+  box-shadow:0 5px 20px rgba(0,0,0,0.15);
+}
+header img { width:45px; height:45px; border-radius:18px; background:white; padding:5px; object-fit:cover; margin-right:12px; }
+header h2 { font-size:18px; }
+header p { opacity:.9; font-size:14px; }
+
+/* LESSON BUTTONS NAV */
+.lesson-nav {
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:10px;
+  margin:75px 10px 20px;
+}
+.lesson-btn {
+  width:45px;
+  height:45px;
+  background:white;
+  border-radius:12px;
+  box-shadow:var(--shadow);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  font-weight:700;
+  font-size:16px;
+  position:relative;
+  transition:.25s;
+}
+.lesson-btn.active { background:var(--primary); color:white; }
+.lesson-btn.locked { opacity:.3; cursor:not-allowed; }
+.lesson-btn.completed { background: #16a34a; color:white; }
+
+/* LESSON CONTENT */
+.lesson-content {
+  max-width:800px;
+  margin:0 auto 120px;
+  padding:15px;
+  background:white;
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  animation:fadeUp .4s ease;
+}
+.lesson-content h3 { margin-bottom:12px; font-size:18px; color:var(--primary);}
+.lesson-content p { margin-bottom:12px; line-height:1.5; }
+.lesson-content pre { background:#f1f5f9; padding:10px; border-radius:10px; overflow-x:auto; margin-bottom:12px; }
+.lesson-content code { color:#d6336c; }
+.lesson-content button {
+  background:var(--primary);
+  color:white;
+  border:none;
+  padding:12px 18px;
+  border-radius:12px;
+  font-size:15px;
+  cursor:pointer;
+  transition:.2s;
+}
+.lesson-content button:active { transform:scale(.95); }
+
+/* BOTTOM NAV */
+nav {
+  position:fixed;
+  bottom:0;
+  left:0;
+  width:100%;
+  background:white;
+  display:flex;
+  justify-content:space-around;
+  padding:14px 0;
+  border-top-left-radius:28px;
+  border-top-right-radius:28px;
+  box-shadow:0 -5px 28px rgba(0,0,0,0.18);
+  z-index:30;
+}
+.nav-item {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  font-size:13px;
+  font-weight:600;
+  width:25%;
+  cursor:pointer;
+}
+.nav-item img { width:36px; height:36px; margin-bottom:4px; opacity:.55; transition:.25s; }
+.nav-item.active img { opacity:1; transform:scale(1.15); }
+.nav-item.active { color:var(--primary); }
+
+/* ANIMATION */
+@keyframes fadeUp {
+  from { transform:translateY(20px); opacity:0; }
+  to { transform:translateY(0); opacity:1; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <img src="logo.png" alt="DigiLearn Logo">
+  <div>
+    <h2>CSS Course</h2>
+    <p>Designing the Web with Style</p>
+  </div>
+</header>
+
+<div class="lesson-nav" id="lessonNav"></div>
+<div class="lesson-content" id="lessonContent"></div>
+
+<nav>
+  <div class="nav-item active" onclick="location.href='dashboard.html'"><img src="home.png" alt="Home">Home</div>
+  <div class="nav-item" onclick="location.href='courses.html'"><img src="learn.png" alt="Learn">Learn</div>
+  <div class="nav-item" onclick="location.href='settings.html'"><img src="settings.png" alt="Settings">Settings</div>
+  <div class="nav-item" onclick="location.href='profile.html'"><img src="profile.png" alt="Profile">Profile</div>
+</nav>
+
+<script>
+
+/* COURSE LESSONS - CONVERSATIONAL TONE */
+const lessons = [
+  {
+    title:"Lesson 1: What is CSS?",
+    content:`CSS, or Cascading Style Sheets, is what makes your webpages look attractive.  
+Think of HTML as the skeleton of a page. CSS is the clothing, colors, fonts, and makeup that make it visually appealing.
+
+<b>Scenario:</b> You built your first UMYUK course page with HTML. Without CSS, it’s just plain text and boxes. CSS allows you to change colors, spacing, fonts, and layout to make the page readable and appealing.
+
+<b>Example:</b>
+<pre><code>p { color: blue; font-size: 18px; }</code></pre>
+
+<b>Tip:</b> Start small. Change text colors and sizes first before diving into layouts. Observe how tiny changes affect readability.
+`
+  },
+  {
+    title:"Lesson 2: Selectors",
+    content:`Selectors are how CSS targets specific HTML elements.  
+They are like addresses telling CSS which elements to style.
+
+<b>Scenario:</b> You have a course page with multiple headings and cards. You only want to change the color of the main title or adjust the padding of specific cards.
+
+<b>Example:</b>
+<pre><code>h1 { color: red; }          /* all h1 headings */
+#title { font-size: 30px; }    /* element with id="title" */
+.card { padding: 20px; }       /* elements with class="card" */</code></pre>
+
+<b>Tip:</b> IDs are unique, classes can be reused. Pick wisely to keep your CSS organized.
+`
+  },
+  {
+    title:"Lesson 3: Colors & Typography",
+    content:`CSS controls the look of text: fonts, size, weight, line spacing, and color.
+
+<b>Scenario:</b> You’re designing a PixelLab tutorial page. You want readable text with a font that looks professional.
+
+<b>Example:</b>
+<pre><code>body {
+  font-family: 'Poppins', sans-serif;
+  color: #222;
+  line-height: 1.6;
+}</code></pre>
+
+<b>Tip:</b> Stick to 2-3 fonts per page. Use contrast for readability: dark text on a light background works best.
+`
+  },
+  {
+    title:"Lesson 4: Box Model",
+    content:`Every element on a page is a box. The box model defines the space around content.
+
+<b>Components:</b>  
+- <b>Content:</b> Text or images inside the element.  
+- <b>Padding:</b> Space between content and border.  
+- <b>Border:</b> Outline around the element.  
+- <b>Margin:</b> Space outside the element.
+
+<b>Example:</b>
+<pre><code>.box {
+  padding: 20px;
+  margin: 10px;
+  border: 2px solid black;
+}</code></pre>
+
+<b>Tip:</b> Inspect elements in your browser to see how padding, borders, and margins affect layout.
+`
+  },
+  {
+    title:"Lesson 5: Flexbox",
+    content:`Flexbox is a modern layout system for arranging elements easily.
+
+<b>Scenario:</b> You want to center course cards horizontally with equal spacing on a page.
+
+<b>Example:</b>
+<pre><code>.row {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}</code></pre>
+
+<b>Tip:</b> Use flexbox when you need alignment and spacing without messy floats or manual positioning.
+`
+  },
+  {
+    title:"Lesson 6: CSS Grid",
+    content:`Grid is for creating complex layouts using rows and columns.
+
+<b>Scenario:</b> You want a dashboard with two equal sections side by side.
+
+<b>Example:</b>
+<pre><code>.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;  /* two equal columns */
+  gap: 20px;
+}</code></pre>
+
+<b>Tip:</b> Combine grid and flexbox for responsive and flexible layouts.
+`
+  },
+  {
+    title:"Lesson 7: Responsive Design",
+    content:`Responsive design makes your page look good on all devices, from desktops to phones.
+
+<b>Scenario:</b> Your PixelLab course page looks perfect on desktop but needs to adapt to mobile screens.
+
+<b>Example:</b>
+<pre><code>@media (max-width: 600px) {
+  .card {
+    width: 100%;
+  }
+}</code></pre>
+
+<b>Tip:</b> Always test your layouts on multiple screen sizes. Media queries are your best friend for responsive design.
+`
+  },
+  {
+    title:"Lesson 8: Transitions & Animations",
+    content:`Transitions and animations make your page interactive and visually smooth.
+
+<b>Scenario:</b> You want buttons to slightly enlarge when hovered to indicate interactivity.
+
+<b>Example:</b>
+<pre><code>.btn {
+  transition: 0.3s;           /* smooth transition */
+}
+.btn:hover {
+  transform: scale(1.1);      /* grows slightly on hover */
+}</code></pre>
+
+<b>Tip:</b> Don’t overdo animations. Subtle effects enhance user experience.
+`
+  },
+  {
+    title:"Lesson 9: Positioning",
+    content:`Positioning determines where elements appear on the page.
+
+<b>Types:</b>  
+- absolute: relative to the nearest positioned parent  
+- relative: offset relative to its normal position  
+- fixed: stays in the viewport  
+- sticky: sticks when scrolling
+
+<b>Example:</b>
+<pre><code>.box {
+  position: absolute;
+  top: 10px;
+  left: 20px;
+}</code></pre>
+
+<b>Tip:</b> Use positioning carefully. Overusing absolute positioning can break responsive layouts.
+`
+  },
+  {
+    title:"Lesson 10: Mini Project",
+    content:`Now it’s time to put everything together. Build a styled card combining all the CSS concepts you’ve learned: typography, colors, box model, flex/grid, transitions, and responsive behavior.
+
+<b>Scenario:</b> Imagine a PixelLab course card that shows course title, description, and a “Start Learning” button. Make it visually appealing and mobile-friendly.
+
+<b>Outcome:</b> You will understand how CSS transforms a simple HTML page into a polished, interactive, and professional interface.
+`
+  }
+];
+
+let completed = 0;
+
+function renderLessonButtons() {
+  const nav = document.getElementById("lessonNav");
+  nav.innerHTML = "";
+  lessons.forEach((lesson, i) => {
+    const btn = document.createElement("div");
+    btn.className = "lesson-btn";
+    if(i <= completed) btn.classList.add("active");
+    if(i < completed) btn.classList.add("completed");
+    if(i > completed) btn.classList.add("locked");
+    btn.innerText = i+1;
+    btn.onclick = () => { if(i <= completed) showLesson(i); };
+    nav.appendChild(btn);
+  });
+}
+
+function showLesson(index) {
+  const content = document.getElementById("lessonContent");
+  
+  content.innerHTML = `
+    <h3>${lessons[index].title}</h3>
+    <p>${lessons[index].content}</p>
+    ${index < lessons.length-1 
+        ? "<button id='nextLesson'>Next Lesson</button>" 
+        : "<p>You have completed the full CSS course!</p>"}
+  `;
+
+  const nextBtn = document.getElementById("nextLesson");
+  if(nextBtn){
+    nextBtn.addEventListener("click", ()=>{
+      completed = Math.max(completed, index+1);
+      renderLessonButtons();
+      showLesson(index+1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
+}
+
+document.querySelectorAll(".nav-item").forEach(item=>{
+  item.addEventListener("click", ()=>{
+    document.querySelectorAll(".nav-item").forEach(x=>x.classList.remove("active"));
+    item.classList.add("active");
+  });
+});
+
+renderLessonButtons();
+showLesson(0);
+
+</script>
+
+</body>
+</html>

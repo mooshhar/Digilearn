@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>DigiLearn — Reset Password</title>
+
+<style>
+:root {
+  --bg: #f6fbff; --card: #fff; --accent: #2563eb;
+  --accent-soft: rgba(37,99,235,0.12); --text-dark: #0f172a; --muted: #6b7280;
+  --radius: 18px; --shadow-soft: 0 8px 24px rgba(16,24,40,0.08);
+  --transition: .3s ease;
+}
+body.dark {
+  --bg:#1f2937; --card:#111827; --accent:#3b82f6; --accent-soft: rgba(59,130,246,0.12);
+  --text-dark:#f9fafb; --muted:#9ca3af;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0; height:100vh; display:flex; justify-content:center; align-items:center;
+  background:linear-gradient(180deg, var(--bg), var(--card) 88%);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;
+  color:var(--text-dark); transition: background 0.3s,color 0.3s;
+}
+.container {
+  width:100%; max-width:430px; background:var(--card); padding:30px 26px;
+  border-radius:var(--radius); box-shadow:var(--shadow-soft); text-align:center;
+  opacity:0; transform:translateY(16px); animation:fadeIn .7s forwards;
+}
+@keyframes fadeIn { to { opacity:1; transform:translateY(0); } }
+.title { font-size:24px; font-weight:700; margin-bottom:20px; }
+.input { width:100%; padding:14px 16px; margin-top:14px; font-size:16px; border-radius:14px;
+  border:1px solid rgba(0,0,0,0.12); background:#fafafa; color:var(--text-dark);
+  transition: border var(--transition), box-shadow var(--transition), background .3s, color .3s;
+}
+body.dark .input { background:#1f2937; color:#f9fafb; border:1px solid rgba(156,163,175,0.5); }
+.input:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(37,99,235,0.18); outline:none; }
+.btn-primary {
+  width:100%; margin-top:18px; padding:14px; border:none; border-radius:14px;
+  background:var(--accent); color:#fff; font-size:17px; font-weight:600;
+  cursor:pointer; transition:.25s; position:relative; overflow:hidden;
+}
+.btn-primary:active { transform:scale(.96); }
+.message { margin-top:15px; font-size:15px; opacity:0; transform:translateY(4px); transition:.28s; }
+.message.show { opacity:1; transform:translateY(0); }
+.success { color:#059669; }
+.error { color:#dc2626; animation:shake .35s; }
+@keyframes shake { 0% {transform:translateX(0);} 25% {transform:translateX(-4px);} 50% {transform:translateX(4px);} 75% {transform:translateX(-4px);} 100% {transform:translateX(0);} }
+.hidden { display:none; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="title">Reset Your Password</div>
+
+  <input id="usernameInput" class="input" type="text" placeholder="Enter your username or email">
+  <button id="checkUserBtn" class="btn-primary">Next</button>
+
+  <div id="questionsBox" class="hidden">
+    <div style="margin-top:22px; font-weight:600;">Security Questions</div>
+    <div id="question1" class="questionLabel"></div>
+    <input id="answer1" class="input" placeholder="Your Answer">
+    <div id="question2" class="questionLabel" style="margin-top:10px;"></div>
+    <input id="answer2" class="input" placeholder="Your Answer">
+    <button id="verifyBtn" class="btn-primary">Verify Answers</button>
+  </div>
+
+  <div id="resetBox" class="hidden">
+    <input id="newPass" class="input" type="password" placeholder="New Password (min 6 chars)">
+    <button id="resetBtn" class="btn-primary">Reset Password</button>
+  </div>
+
+  <div id="msg" class="message"></div>
+</div>
+
+<script type="module">
+import { getUser, updateUser } from './auth_v6_1.js';
+
+const msg = document.getElementById("msg");
+const questionsBox = document.getElementById("questionsBox");
+const resetBox = document.getElementById("resetBox");
+let currentUser = null;
+
+function showMessage(text,type='error'){
+  msg.className='message';
+  void msg.offsetWidth;
+  msg.textContent=text;
+  msg.classList.add('show',type);
+}
+
+// Step 1: Check User
+document.getElementById("checkUserBtn").onclick = async () => {
+  const username = document.getElementById("usernameInput").value.trim();
+  if(!username) return showMessage("Please enter your username.", "error");
+
+  try {
+    currentUser = await getUser(username);
+    if(!currentUser) return showMessage("User not found.", "error");
+
+    // Map proper security fields
+    document.getElementById("question1").textContent = currentUser.securityQ1;
+    document.getElementById("question2").textContent = currentUser.securityQ2;
+    questionsBox.classList.remove("hidden");
+    showMessage("Answer your security questions.", "success");
+  } catch(err){
+    console.error(err);
+    showMessage("Error fetching user.", "error");
+  }
+};
+
+// Step 2: Verify Security Answers
+document.getElementById("verifyBtn").onclick = () => {
+  if(!currentUser) return showMessage("No user selected.", "error");
+
+  const a1 = document.getElementById("answer1").value.trim().toLowerCase();
+  const a2 = document.getElementById("answer2").value.trim().toLowerCase();
+
+  if(a1 !== currentUser.securityA1.toLowerCase() || a2 !== currentUser.securityA2.toLowerCase()){
+    return showMessage("Incorrect security answers.", "error");
+  }
+
+  showMessage("Verification successful!", "success");
+  resetBox.classList.remove("hidden");
+};
+
+// Step 3: Reset Password
+document.getElementById("resetBtn").onclick = async () => {
+  if(!currentUser) return showMessage("No user selected.", "error");
+
+  const newPass = document.getElementById("newPass").value.trim();
+  if(newPass.length < 6) return showMessage("Password must be at least 6 characters.", "error");
+
+  try {
+    currentUser.password = newPass;
+    await updateUser(currentUser);
+    showMessage("Password updated successfully!", "success");
+    setTimeout(()=> window.location.href="welcome.html",1500);
+  } catch(err){
+    console.error(err);
+    showMessage("Failed to reset password.", "error");
+  }
+};
+</script>
+
+</body>
+</html>

@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>DigiLearn • Lessons</title>
+<style>
+:root {
+  --primary:#2563eb;
+  --secondary:#6a11cb;
+  --bg:#f6f8ff;
+  --card:#ffffff;
+  --text:#1e293b;
+  --muted:#64748b;
+  --radius:20px;
+  --shadow:0 8px 20px rgba(0,0,0,0.08);
+}
+
+body.dark {
+  --bg:#1f2937;
+  --card:#111827;
+  --text:#f9fafb;
+  --muted:#9ca3af;
+  --primary:#3b82f6;
+  --secondary:#6d28d9;
+}
+
+body {
+  margin:0;
+  font-family:"SF Pro Display","Segoe UI",sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  padding-bottom:100px;
+  transition: background .3s,color .3s;
+}
+
+/* HEADER */
+header {
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  padding:50px 22px 22px;
+  color:white;
+  border-bottom-left-radius:28px;
+  border-bottom-right-radius:28px;
+}
+header h1 {margin:0; font-weight:700; font-size:24px;}
+
+/* LESSON LIST */
+.lesson-list {
+  padding:20px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+.lesson-card {
+  background:var(--card);
+  padding:12px 16px;
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  transition:.3s;
+}
+.lesson-card:hover {transform:scale(1.02);}
+.lesson-title {font-size:16px;}
+
+/* PROGRESS BAR */
+.progress-bar {
+  margin:0 20px 20px 20px;
+  height:10px;
+  background:#e5e7eb;
+  border-radius:5px;
+  overflow:hidden;
+}
+body.dark .progress-bar {background:#374151;}
+.progress-fill {
+  height:100%;
+  width:0%;
+  background:var(--primary);
+  transition: width .5s ease;
+  border-radius:5px;
+}
+.progress-text {text-align:right; font-size:12px; color:var(--muted); margin:0 20px 10px 20px;}
+
+/* NAV BAR */
+nav {
+  position:fixed;
+  bottom:0;
+  left:0;
+  width:100%;
+  background:var(--card);
+  padding:12px 0;
+  display:flex;
+  justify-content:space-around;
+  border-top-left-radius:25px;
+  border-top-right-radius:25px;
+  box-shadow:0 -4px 20px rgba(0,0,0,0.12);
+}
+.nav-item {text-align:center; font-size:12px; color:var(--muted); cursor:pointer;}
+.nav-item i {display:block; font-size:22px;}
+.nav-item.active {color:var(--primary);}
+</style>
+</head>
+<body>
+
+<header>
+  <h1 id="courseTitle">Course Name</h1>
+</header>
+
+<div class="progress-bar">
+  <div class="progress-fill" id="progressFill"></div>
+</div>
+<div class="progress-text" id="progressText">0% completed</div>
+
+<div class="lesson-list" id="lessonList"></div>
+
+<nav>
+  <div class="nav-item" onclick="goHome()"><i>🏠</i>Home</div>
+  <div class="nav-item"><i>📖</i>Courses</div>
+  <div class="nav-item"><i>🎯</i>Activity</div>
+  <div class="nav-item" onclick="openProfile()"><i>👤</i>Profile</div>
+</nav>
+
+<script type="module">
+// ----- SETTINGS -----
+async function getSettings() {
+  try {
+    const settings = await fetch('settings.json').then(res => res.json());
+    if(settings.darkMode) document.body.classList.add('dark');
+  } catch(e){ console.log('No settings found'); }
+}
+
+// ----- COURSE DATA -----
+// Normally, this would come from localStorage or a DB to persist progress
+let courses = [
+  {
+    title: "JavaScript Essentials",
+    category: "programming",
+    lessons: [
+      {title:"Variables & Data Types",completed:true},
+      {title:"Functions & Scope",completed:false},
+      {title:"DOM Manipulation",completed:false},
+      {title:"Events & Listeners",completed:true},
+      {title:"ES6 Basics",completed:false}
+    ]
+  },
+  {
+    title: "UI/UX Design Basics",
+    category: "design",
+    lessons: [
+      {title:"Design Principles",completed:true},
+      {title:"Wireframing",completed:false},
+      {title:"Prototyping",completed:true},
+      {title:"Color Theory",completed:false},
+      {title:"Typography",completed:true}
+    ]
+  },
+  {
+    title: "Entrepreneurship 101",
+    category: "business",
+    lessons: [
+      {title:"Idea Validation",completed:true},
+      {title:"Business Models",completed:false},
+      {title:"Funding & Investors",completed:true},
+      {title:"Marketing Strategy",completed:false},
+      {title:"Pitching",completed:false}
+    ]
+  },
+  {
+    title: "Digital Marketing Mastery",
+    category: "marketing",
+    lessons: [
+      {title:"SEO Basics",completed:true},
+      {title:"Social Media",completed:true},
+      {title:"Email Marketing",completed:false},
+      {title:"Ads & PPC",completed:true},
+      {title:"Analytics",completed:false}
+    ]
+  },
+  {
+    title: "Learn French",
+    category: "languages",
+    lessons: [
+      {title:"Alphabet & Pronunciation",completed:true},
+      {title:"Basic Phrases",completed:false},
+      {title:"Grammar Essentials",completed:true},
+      {title:"Numbers & Dates",completed:true},
+      {title:"Daily Conversation",completed:false}
+    ]
+  }
+];
+
+// ----- UTIL -----
+function calculateProgress(lessons){
+  const completed = lessons.filter(l=>l.completed).length;
+  return Math.round((completed/lessons.length)*100);
+}
+
+// ----- RENDER LESSONS -----
+const urlParams = new URLSearchParams(window.location.search);
+const courseName = urlParams.get('course') || "JavaScript Essentials";
+
+const course = courses.find(c=>c.title===courseName) || courses[0];
+document.getElementById('courseTitle').textContent = course.title;
+
+const lessonList = document.getElementById('lessonList');
+const progressFill = document.getElementById('progressFill');
+const progressText = document.getElementById('progressText');
+
+function renderLessons(){
+  lessonList.innerHTML = "";
+  course.lessons.forEach((lesson,index)=>{
+    const card = document.createElement('div');
+    card.className = "lesson-card";
+    card.innerHTML = `
+      <span class="lesson-title">${lesson.title}</span>
+      <input type="checkbox" ${lesson.completed?'checked':''} data-index="${index}">
+    `;
+    lessonList.appendChild(card);
+  });
+  updateProgress();
+}
+
+// ----- UPDATE PROGRESS -----
+function updateProgress(){
+  const progress = calculateProgress(course.lessons);
+  progressFill.style.width = progress + "%";
+  progressText.textContent = progress + "% completed";
+}
+
+// ----- HANDLE CHECKBOX -----
+lessonList.addEventListener('change', function(e){
+  if(e.target.matches('input[type="checkbox"]')){
+    const idx = e.target.dataset.index;
+    course.lessons[idx].completed = e.target.checked;
+    updateProgress();
+  }
+});
+
+// ----- NAV -----
+function goHome(){ window.location.href="dashboard.html"; }
+function openProfile(){ window.location.href="profile.html"; }
+
+renderLessons();
+getSettings();
+</script>
+
+</body>
+</html>

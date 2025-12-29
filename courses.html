@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>DigiLearn Courses</title>
+<link rel="icon" href="logo.png">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2563eb">
+
+<style>
+:root {
+  --primary: #2563eb;
+  --secondary: #6a11cb;
+  --bg: #f7faff;
+  --card: #ffffff;
+  --text: #0f172a;
+  --muted: #64748b;
+  --radius: 18px;
+  --shadow: 0 8px 25px rgba(0,0,0,0.08);
+  --transition: 250ms ease;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; font-family:"Segoe UI", sans-serif; }
+body { background: var(--bg); color: var(--text); padding-bottom:140px; overflow-x:hidden; }
+
+/* HEADER */
+header {
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  background: linear-gradient(135deg, var(--secondary), var(--primary));
+  color:white;
+  padding:14px 16px;
+  display:flex;
+  align-items:center;
+  border-bottom-left-radius:18px;
+  border-bottom-right-radius:18px;
+  z-index:20;
+  box-shadow:0 5px 20px rgba(0,0,0,0.15);
+}
+header h2 { font-size:18px; flex:1; text-align:center; }
+header img { width:40px; height:40px; border-radius:12px; background:white; padding:4px; object-fit:cover; }
+
+/* CATEGORY TABS */
+.tabs {
+  display:flex;
+  gap:12px;
+  padding:16px;
+  overflow-x:auto;
+  margin-top:80px;
+}
+.tabs::-webkit-scrollbar { display:none; }
+.tab {
+  padding:10px 18px;
+  background:white;
+  border-radius:15px;
+  box-shadow:var(--shadow);
+  font-weight:600;
+  cursor:pointer;
+  white-space:nowrap;
+  transition:.25s;
+}
+.tab.active { background:var(--primary); color:white; }
+
+/* COURSE SECTIONS */
+.section-title {
+  font-size:18px;
+  font-weight:700;
+  margin:20px 0 12px 18px;
+}
+
+/* COURSES CONTAINER */
+.courses-container {
+  padding:0 18px 18px;
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+  max-width:600px;
+  margin:0 auto;
+}
+
+.course-item {
+  background:white;
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  overflow:hidden;
+  transition:transform .25s, box-shadow .25s;
+}
+.course-item:hover {
+  transform:translateY(-2px);
+  box-shadow:0 12px 28px rgba(0,0,0,0.12);
+}
+
+.course-item img {
+  width:100%;
+  height:180px;
+  object-fit:cover;
+}
+
+.course-body {
+  padding:15px 18px;
+}
+.course-body h2 { font-size:18px; font-weight:700; margin-bottom:10px; }
+.course-body p { font-size:15px; color:var(--muted); margin-bottom:12px; }
+.course-body button {
+  background:var(--primary);
+  color:white;
+  border:none;
+  padding:10px 16px;
+  border-radius:12px;
+  font-size:14px;
+  cursor:pointer;
+  transition:.2s;
+}
+.course-body button:active { transform:scale(.92); }
+
+/* BOTTOM NAV */
+nav {
+  position:fixed;
+  bottom:0;
+  left:0;
+  width:100%;
+  background:white;
+  display:flex;
+  justify-content:space-around;
+  padding:14px 0;
+  border-top-left-radius:28px;
+  border-top-right-radius:28px;
+  box-shadow:0 -5px 28px rgba(0,0,0,0.18);
+  z-index:30;
+}
+.nav-item {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  font-size:13px;
+  font-weight:600;
+  width:25%;
+  position:relative;
+  cursor:pointer;
+  transition:.25s;
+}
+.nav-item img { width:36px; height:36px; margin-bottom:4px; opacity:.55; transition:.25s; }
+.nav-item.active img { opacity:1; transform:scale(1.15); }
+.nav-item.active { color:var(--primary); }
+.nav-item::after {
+  content:"";
+  position:absolute;
+  width:6px;
+  height:6px;
+  background:var(--primary);
+  border-radius:50%;
+  left:50%;
+  bottom:4px;
+  transform:translateX(-50%) scale(0);
+  opacity:0;
+  transition:.3s;
+}
+.nav-item.active::after {
+  transform:translateX(-50%) scale(1);
+  opacity:1;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <img src="logo.png" alt="DigiLearn Logo">
+  <h2>Learn</h2>
+</header>
+
+<div class="tabs" id="categoryTabs">
+  <div class="tab active" data-category="all">All</div>
+  <div class="tab" data-category="frontend">Frontend</div>
+  <div class="tab" data-category="design">UI/UX</div>
+  <div class="tab" data-category="programming">Programming</div>
+</div>
+
+<div class="courses-container" id="coursesContainer"></div>
+
+<nav>
+  <div class="nav-item" onclick="location.href='dashboard.html'"><img src="home.png" alt="Home">Home</div>
+  <div class="nav-item active" onclick="location.href='courses.html'"><img src="learn.png" alt="Learn">Learn</div>
+  <div class="nav-item" onclick="location.href='settings.html'"><img src="settings.png" alt="Settings">Settings</div>
+  <div class="nav-item" onclick="location.href='profile.html'"><img src="profile.png" alt="Profile">Profile</div>
+</nav>
+
+<script>
+const courses = [
+  {title:"Introduction to HTML", category:"frontend", image:"html.jpg", desc:"Learn the basic structure of web pages.", link:"html.html", enrolled:true},
+  {title:"CSS Mastery", category:"frontend", image:"css.jpg", desc:"Master modern CSS and responsive layouts.", link:"css.html", enrolled:false},
+  {title:"JavaScript Fundamentals", category:"frontend", image:"js.jpg", desc:"Understand core JavaScript concepts.", link:"js.html", enrolled:true},
+  {title:"UI/UX Design", category:"design", image:"UI_UX.jpg", desc:"Learn interface and user experience.", link:"uiux.html", enrolled:false},
+  {title:"Python Programming", category:"programming", image:"python.jpg", desc:"Start coding Python for real-world projects.", link:"python.html", enrolled:true},
+];
+
+function renderCourses(category="all") {
+  const container = document.getElementById("coursesContainer");
+  container.innerHTML = "";
+
+  const filtered = category === "all" ? courses : courses.filter(c=>c.category===category);
+
+  // Enrolled courses
+  const enrolled = filtered.filter(c=>c.enrolled);
+  if(enrolled.length>0) {
+    container.innerHTML += `<div class="section-title">Enrolled Courses</div>`;
+    enrolled.forEach(c=>container.appendChild(createCourseCard(c, true)));
+  }
+
+  // Unenrolled courses
+  const unenrolled = filtered.filter(c=>!c.enrolled);
+  if(unenrolled.length>0) {
+    container.innerHTML += `<div class="section-title">Available Courses</div>`;
+    unenrolled.forEach(c=>container.appendChild(createCourseCard(c, false)));
+  }
+}
+
+function createCourseCard(course, isEnrolled) {
+  const item = document.createElement("div");
+  item.className = "course-item";
+  const btnText = isEnrolled ? "Continue Course" : "Enroll Now";
+  item.innerHTML = `
+    <img src="${course.image}" alt="${course.title}">
+    <div class="course-body">
+      <h2>${course.title}</h2>
+      <p>${course.desc}</p>
+      <button onclick="location.href='${course.link}'">${btnText}</button>
+    </div>
+  `;
+  return item;
+}
+
+/* TAB FILTER */
+document.querySelectorAll(".tab").forEach(tab=>{
+  tab.addEventListener("click",()=>{
+    document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+    tab.classList.add("active");
+    renderCourses(tab.dataset.category);
+  });
+});
+
+/* NAV ACTIVE */
+document.querySelectorAll(".nav-item").forEach(item=>{
+  item.addEventListener("click",()=>{
+    document.querySelectorAll(".nav-item").forEach(x=>x.classList.remove("active"));
+    item.classList.add("active");
+  });
+});
+
+renderCourses("all");
+</script>
+
+</body>
+</html>
