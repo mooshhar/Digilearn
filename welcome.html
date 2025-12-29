@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>DigiLearn — Welcome</title>
+
+<style>
+:root {
+  --bg: #f6fbff;
+  --card: #ffffff;
+  --accent: #2563eb;
+  --accent-soft: rgba(37,99,235,0.13);
+  --text-dark: #0f172a;
+  --muted: #6b7280;
+  --radius: 18px;
+  --shadow-soft: 0 8px 24px rgba(16,24,40,0.08);
+  --shadow-strong: 0 12px 34px rgba(16,24,40,0.14);
+  --transition: 240ms cubic-bezier(.25,.45,.35,1);
+}
+body.dark {
+  --bg: #1f2937;
+  --card: #111827;
+  --accent: #3b82f6;
+  --accent-soft: rgba(59,130,246,0.13);
+  --text-dark: #f9fafb;
+  --muted: #9ca3af;
+}
+* { box-sizing: border-box; }
+html, body { height:100%; margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial; touch-action: manipulation; }
+body { background: linear-gradient(180deg, var(--bg) 0%, var(--card) 90%); display:flex; align-items:center; justify-content:center; padding:20px; color: var(--text-dark); transition: background 0.3s, color 0.3s; }
+.wrapper { width:100%; max-width:430px; background: var(--card); padding:32px 26px; border-radius: var(--radius); box-shadow: var(--shadow-soft); text-align:center; opacity:0; transform:translateY(10px); animation: fadeIn 0.7s ease forwards; }
+@keyframes fadeIn { to { opacity:1; transform:translateY(0); } }
+.logo { width:86px; height:86px; border-radius:16px; overflow:hidden; margin:0 auto 14px; background: linear-gradient(135deg, var(--accent-soft), rgba(37,99,235,0.04)); box-shadow: var(--shadow-strong); display:flex; align-items:center; justify-content:center; }
+.logo img { width:70%; height:70%; object-fit:contain; display:block; }
+.title { font-size: clamp(22px, 4.5vw, 28px); font-weight:700; margin-bottom:24px; }
+form { display:flex; flex-direction:column; gap:16px; width:100%; margin-top:14px; }
+input { width:100%; padding:14px 16px; border-radius:14px; border:1px solid rgba(0,0,0,0.1); background:#fdfdfd; font-size:17px; transition:border var(--transition), box-shadow var(--transition); }
+body.dark input { background:#1f2937; color:#f9fafb; border:1px solid rgba(156,163,175,0.5); }
+input:focus { border-color: var(--accent); box-shadow:0 0 0 3px rgba(37,99,235,0.18); outline:none; }
+.btn-primary { position:relative; overflow:hidden; padding:14px; border:none; border-radius:14px; background:var(--accent); color:#fff; font-size:17px; font-weight:600; cursor:pointer; }
+.btn-primary .ripple { position:absolute; border-radius:50%; transform:scale(0); animation:rippleAnim 0.6s linear; background:rgba(255,255,255,0.6); pointer-events:none; }
+@keyframes rippleAnim { to { transform:scale(4); opacity:0; } }
+.btn-secondary { margin-top:10px; padding:12px; border-radius:12px; border:1px solid rgba(0,0,0,0.12); background:#f8fafc; color:var(--text-dark); font-size:16px; cursor:pointer; }
+.message { margin-top:18px; font-size:15px; font-weight:500; opacity:0; transform:translateY(6px); transition: opacity 300ms ease, transform 300ms ease; }
+.message.show { opacity:1; transform:translateY(0); }
+.success { color:#059669; }
+.error { color:#dc2626; }
+.forgot-link { display:block; margin-top:12px; font-size:14px; color:var(--accent); text-decoration:none; }
+.forgot-link:hover { text-decoration:underline; }
+</style>
+</head>
+
+<body>
+<div class="wrapper">
+  <div class="logo">
+    <img src="logo.png" alt="DigiLearn Logo">
+  </div>
+
+  <div class="title">Welcome to DigiLearn</div>
+
+  <form id="loginForm">
+    <input type="text" id="username" placeholder="Username or Email" autocomplete="username" required>
+    <input type="password" id="password" placeholder="Password" autocomplete="current-password" required>
+    <button class="btn-primary" type="submit">Login</button>
+  </form>
+
+  <a href="forget-pass.html" class="forgot-link">Forgot Password?</a>
+  <button class="btn-secondary" id="signupBtn" type="button">Sign Up</button>
+
+  <div id="msg" class="message"></div>
+</div>
+
+<script type="module">
+import { getUser } from './auth_v6_1.js';
+
+const $ = id => document.getElementById(id);
+const msgBox = $('msg');
+const form = $('loginForm');
+
+function showMessage(text,type='error'){
+  msgBox.className='message';
+  void msgBox.offsetWidth;
+  msgBox.textContent=text;
+  msgBox.classList.add('show', type);
+}
+
+// Ripple effect
+document.querySelector('.btn-primary').addEventListener('click', function(e){
+  const btn = this;
+  const rect = btn.getBoundingClientRect();
+  const ripple = document.createElement('span');
+  const size = Math.max(rect.width, rect.height);
+  ripple.style.width = ripple.style.height = size+'px';
+  ripple.style.left = e.clientX - rect.left - size/2 + 'px';
+  ripple.style.top = e.clientY - rect.top - size/2 + 'px';
+  ripple.classList.add('ripple');
+  btn.appendChild(ripple);
+  setTimeout(()=> ripple.remove(),600);
+});
+
+// ---------------------------
+// Login logic using IndexedDB
+// ---------------------------
+async function loginUser(usernameOrEmail, password){
+  if(!usernameOrEmail || !password) return { success:false, message:'Please fill in all fields' };
+
+  try {
+    const user = await getUser(usernameOrEmail);
+    if(!user) return { success:false, message:'User not found' };
+    if(user.password !== password) return { success:false, message:'Incorrect password' };
+
+    // Save logged-in user to localStorage
+    localStorage.setItem('currentUser', user.username);
+
+    return { success:true, message:'Login successful!' };
+  } catch(err){
+    console.error(err);
+    return { success:false, message:'Login failed. Try again.' };
+  }
+}
+
+// Form submit
+form.addEventListener('submit', async e => {
+  e.preventDefault();
+  const usernameOrEmail = $('username').value.trim();
+  const password = $('password').value;
+
+  const result = await loginUser(usernameOrEmail, password);
+  showMessage(result.message, result.success ? 'success' : 'error');
+
+  if(result.success){
+    setTimeout(()=> window.location.href='dashboard.html',700);
+  }
+});
+
+$('signupBtn').onclick = () => window.location.href='signup.html';
+</script>
+</body>
+</html>
