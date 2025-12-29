@@ -1,5 +1,5 @@
 const DB_NAME = 'DigiLearnDB';
-const DB_VERSION = 6.2;
+const DB_VERSION = 7.0;
 let db;
 
 // --------------------
