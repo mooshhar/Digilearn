@@ -27,9 +27,9 @@ async function initDB() {
         usersStore.createIndex('email', 'email', { unique: true });
       }
 
-      // Settings store
-      if (!db.objectStoreNames.contains('settings')) {
-        db.createObjectStore('settings', { keyPath: 'key' });
+      // Session store (for active user)
+      if (!db.objectStoreNames.contains('session')) {
+        db.createObjectStore('session', { keyPath: 'username' }); // keyPath is username
       }
 
       // Progress store
@@ -109,7 +109,7 @@ async function signupUser(username, email, password, securityQA = [], otherData 
 }
 
 // --------------------
-// Update user function (NEW)
+// Update user
 // --------------------
 async function updateUser(user) {
   await initDB();
@@ -117,6 +117,42 @@ async function updateUser(user) {
     const tx = db.transaction('users', 'readwrite');
     const store = tx.objectStore('users');
     const req = store.put(user);
+    req.onsuccess = () => resolve(true);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+// --------------------
+// Session helpers
+// --------------------
+async function setSession(username) {
+  await initDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction('session', 'readwrite');
+    const store = tx.objectStore('session');
+    const req = store.put({ username }); // keyPath is username
+    req.onsuccess = () => resolve(true);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function getSession() {
+  await initDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction('session', 'readonly');
+    const store = tx.objectStore('session');
+    const req = store.get('activeUser'); // using 'activeUser' as key
+    req.onsuccess = () => resolve(req.result?.username || null);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function clearSession() {
+  await initDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction('session', 'readwrite');
+    const store = tx.objectStore('session');
+    const req = store.delete('activeUser');
     req.onsuccess = () => resolve(true);
     req.onerror = () => reject(req.error);
   });
@@ -138,5 +174,5 @@ export const createUser = async (data) => {
     null
   );
 };
-export { getUser, signupUser, updateUser }; // <- export added
-export { initDB };  // <-- add this
+
+export { getUser, signupUser, updateUser, initDB, setSession, getSession, clearSession };
