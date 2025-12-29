@@ -72,7 +72,7 @@ input:focus { border-color: var(--accent); box-shadow:0 0 0 3px rgba(37,99,235,0
 </div>
 
 <script type="module">
-import { getUser } from './auth_v6_1.js';
+import { getUser, initDB } from './auth_v6_1.js';
 
 const $ = id => document.getElementById(id);
 const msgBox = $('msg');
@@ -100,7 +100,21 @@ document.querySelector('.btn-primary').addEventListener('click', function(e){
 });
 
 // ---------------------------
-// Login logic using IndexedDB
+// Save session to IndexedDB
+// ---------------------------
+async function saveSession(username){
+  const db = await initDB();
+  return new Promise((resolve,reject)=>{
+    const tx = db.transaction('session','readwrite');
+    const store = tx.objectStore('session');
+    const req = store.put({ id:'activeUser', username });
+    req.onsuccess = ()=> resolve(true);
+    req.onerror = ()=> reject(req.error);
+  });
+}
+
+// ---------------------------
+// Login logic using IndexedDB only
 // ---------------------------
 async function loginUser(usernameOrEmail, password){
   if(!usernameOrEmail || !password) return { success:false, message:'Please fill in all fields' };
@@ -110,8 +124,8 @@ async function loginUser(usernameOrEmail, password){
     if(!user) return { success:false, message:'User not found' };
     if(user.password !== password) return { success:false, message:'Incorrect password' };
 
-    // Save logged-in user to localStorage
-    localStorage.setItem('currentUser', user.username);
+    // Save logged-in user in IndexedDB session
+    await saveSession(user.username);
 
     return { success:true, message:'Login successful!' };
   } catch(err){
@@ -134,6 +148,7 @@ form.addEventListener('submit', async e => {
   }
 });
 
+// Signup button
 $('signupBtn').onclick = () => window.location.href='signup.html';
 </script>
 </body>
