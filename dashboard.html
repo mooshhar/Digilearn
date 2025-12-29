@@ -51,7 +51,7 @@ nav { position:fixed; bottom:0; left:0; width:100%; background: var(--card); dis
 <body>
 
 <header>
-  <img src="https://via.placeholder.com/50" alt="DigiLearn Logo">
+  <img src="logo.png" alt="DigiLearn Logo">
   <div>
     <h2>DigiLearn Premium</h2>
     <p id="headerUsername">Username • Premium Access</p>
@@ -70,20 +70,20 @@ nav { position:fixed; bottom:0; left:0; width:100%; background: var(--card); dis
 </main>
 
 <nav>
-  <div class="nav-item active"><img src="https://via.placeholder.com/36"><span>Home</span></div>
-  <div class="nav-item"><img src="https://via.placeholder.com/36"><span>Learn</span></div>
-  <div class="nav-item"><img src="https://via.placeholder.com/36"><span>Settings</span></div>
-  <div class="nav-item"><img src="https://via.placeholder.com/36"><span>Profile</span></div>
+  <div class="nav-item active"><img src="home.png"><span>Home</span></div>
+  <div class="nav-item"><img src="learn.png"><span>Learn</span></div>
+  <div class="nav-item"><img src="settings.png"><span>Settings</span></div>
+  <div class="nav-item"><img src="profile.png"><span>Profile</span></div>
 </nav>
 
 <script>
 // Courses data
 const courses = [
-  {title:"Introduction to HTML", category:"frontend", image:"https://via.placeholder.com/400x180?text=HTML", desc:"Learn the basic structure of web pages."},
-  {title:"CSS Mastery", category:"frontend", image:"https://via.placeholder.com/400x180?text=CSS", desc:"Master modern CSS and responsive layouts."},
-  {title:"JavaScript Fundamentals", category:"frontend", image:"https://via.placeholder.com/400x180?text=JS", desc:"Understand core JavaScript concepts."},
-  {title:"UI/UX Design", category:"design", image:"https://via.placeholder.com/400x180?text=UI/UX", desc:"Learn interface and experience design."},
-  {title:"Python Programming", category:"programming", image:"https://via.placeholder.com/400x180?text=Python", desc:"Start coding Python for real-world projects."},
+  {title:"Introduction to HTML", category:"frontend", image:"html.jpg", desc:"Learn the basic structure of web pages."},
+  {title:"CSS Mastery", category:"frontend", image:"css.jpg", desc:"Master modern CSS and responsive layouts."},
+  {title:"JavaScript Fundamentals", category:"frontend", image:"js.jpg", desc:"Understand core JavaScript concepts."},
+  {title:"UI/UX Design", category:"design", image:"UI_UX.jpg", desc:"Learn interface and experience design."},
+  {title:"Python Programming", category:"programming", image:"python.jpg", desc:"Start coding Python for real-world projects."},
 ];
 
 // Render courses
@@ -126,4 +126,4 @@ document.querySelectorAll(".nav-item").forEach(item=>{
 renderCourses("all");
 </script>
 </body>
-                                                                    </html>
+</html>
