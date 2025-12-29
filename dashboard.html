@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>DigiLearn Premium Courses</title>
+<link rel="icon" href="logo.png">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2563eb">
+
+<style>
+:root {
+  --primary: #2563eb;
+  --secondary: #6a11cb;
+  --bg: #f7faff;
+  --card: #ffffff;
+  --text: #0f172a;
+  --muted: #64748b;
+  --radius: 22px;
+  --shadow: 0 10px 30px rgba(0,0,0,0.08);
+  --transition: 250ms ease;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  padding-bottom:140px;
+  overflow-x:hidden;
+  transition: background 0.3s, color 0.3s;
+}
+
+body.dark {
+  --bg: #121212;
+  --card: #1e1e1e;
+  --text: #e0e0e0;
+  --muted: #aaa;
+  --shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+/* Reset & general */
+* { margin:0; padding:0; box-sizing:border-box; font-family:"Segoe UI", sans-serif; }
+
+/* HEADER */
+header {
+  position:fixed;
+  top:0; left:0;
+  width:100%;
+  z-index:20;
+  background: linear-gradient(135deg, var(--secondary), var(--primary));
+  color:white;
+  padding:14px 18px;
+  border-bottom-left-radius:22px;
+  border-bottom-right-radius:22px;
+  display:flex;
+  align-items:center;
+  box-shadow:0 5px 20px rgba(0,0,0,0.15);
+}
+header img { width:50px; height:50px; border-radius:18px; background:white; padding:5px; object-fit:cover; margin-right:12px; }
+header h2 { font-size:20px; }
+header p { opacity:.9; font-size:14px; }
+
+/* CATEGORY TABS */
+.tabs {
+  display:flex;
+  gap:12px;
+  padding:16px;
+  overflow-x:auto;
+  margin-top:80px;
+}
+.tabs::-webkit-scrollbar { display:none; }
+.tab {
+  padding:10px 18px;
+  background: var(--card);
+  border-radius:15px;
+  box-shadow:0 5px 20px rgba(0,0,0,0.08);
+  font-weight:600;
+  cursor:pointer;
+  white-space:nowrap;
+  transition:.25s, background .3s, color .3s;
+  color: var(--text);
+}
+.tab.active { background:var(--primary); color:white; }
+
+/* COURSE FEED */
+.courses-container { padding:18px; display:flex; flex-direction:column; gap:26px; }
+
+.course-item {
+  background: var(--card);
+  border-radius:var(--radius);
+  box-shadow: var(--shadow);
+  overflow:hidden;
+  animation:fadeUp .4s ease;
+  transition: background .3s, color .3s, box-shadow .3s;
+}
+@keyframes fadeUp { from { transform:translateY(20px); opacity:0; } to { transform:translateY(0); opacity:1; } }
+
+.course-item img { width:100%; height:180px; object-fit:cover; }
+
+.course-body { padding:18px; }
+.course-body h2 { font-size:18px; font-weight:700; margin-bottom:10px; color: var(--text); transition: color .3s; }
+.course-body p { font-size:15px; color: var(--muted); margin-bottom:15px; transition: color .3s; }
+.course-body button {
+  background:var(--primary);
+  color:white;
+  border:none;
+  padding:12px 18px;
+  border-radius:14px;
+  font-size:15px;
+  cursor:pointer;
+  transition:0.2s;
+}
+.course-body button:active { transform:scale(.92); }
+
+/* BOTTOM NAV */
+nav {
+  position:fixed;
+  bottom:0; left:0; width:100%;
+  background: var(--card);
+  display:flex;
+  justify-content:space-around;
+  padding:14px 0;
+  border-top-left-radius:28px;
+  border-top-right-radius:28px;
+  box-shadow:0 -5px 28px rgba(0,0,0,0.18);
+  z-index:30;
+  transition: background .3s;
+}
+.nav-item {
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  text-decoration:none; 
+  color:var(--muted);
+  font-size:12px;
+  width:25%;
+  position:relative;
+  cursor:pointer;
+  transition:.25s, color .3s;
+}
+.nav-item img { width:36px; height:36px; margin-bottom:2px; opacity:0.55; transition:.25s, filter .3s; }
+.nav-item span { display:block; font-size:12px; }
+.nav-item.active { color:var(--primary); }
+.nav-item.active img { opacity:1; transform:scale(1.15); }
+.nav-item::after {
+  content:"";
+  position:absolute;
+  width:6px;
+  height:6px;
+  background:var(--primary);
+  border-radius:50%;
+  left:50%;
+  bottom:4px;
+  transform:translateX(-50%) scale(0);
+  opacity:0;
+  transition:0.3s;
+}
+.nav-item.active::after { transform:translateX(-50%) scale(1); opacity:1; }
+</style>
+</head>
+<body>
+
+<header>
+  <img src="logo.png" alt="DigiLearn Logo">
+  <div>
+    <h2>DigiLearn Premium</h2>
+    <p id="headerUsername">Username • Premium Access</p>
+  </div>
+</header>
+
+<main>
+<div class="tabs" id="categoryTabs">
+  <div class="tab active" data-category="all">All</div>
+  <div class="tab" data-category="frontend">Frontend</div>
+  <div class="tab" data-category="design">UI/UX</div>
+  <div class="tab" data-category="programming">Programming</div>
+</div>
+
+<div class="courses-container" id="coursesContainer"></div>
+</main>
+
+<nav>
+  <a class="nav-item active" href="dashboard.html"><img src="home.png"><span>Home</span></a>
+  <a class="nav-item" href="courses.html"><img src="learn.png"><span>Learn</span></a>
+  <a class="nav-item" href="settings.html"><img src="settings.png"><span>Settings</span></a>
+  <a class="nav-item" href="profile.html"><img src="profile.png"><span>Profile</span></a>
+</nav>
+
+<script type="module">
+import { getUser, initDB } from './auth_v6_1.js';
+
+const headerUsername = document.getElementById('headerUsername');
+
+// ------------------
+// IndexedDB Helpers
+async function getCurrentUser() {
+  const db = await initDB();
+  return new Promise((resolve,reject)=>{
+    const tx = db.transaction('settings','readonly');
+    const store = tx.objectStore('settings');
+    const req = store.get('currentUser');
+    req.onsuccess = ()=>resolve(req.result?.value || null);
+    req.onerror = ()=>reject(req.error);
+  });
+}
+
+async function getSetting(username,key){
+  const db = await initDB();
+  return new Promise((resolve,reject)=>{
+    const tx = db.transaction('settings','readonly');
+    const store = tx.objectStore('settings');
+    const req = store.get(`${username}_${key}`);
+    req.onsuccess = ()=>resolve(req.result?.value || null);
+    req.onerror = ()=>reject(req.error);
+  });
+}
+
+// ------------------
+// Load user and dark mode
+async function loadUserProfile(){
+  const username = await getCurrentUser();
+  if(!username) return location.href='login.html';
+  const user = await getUser(username);
+  if(!user) return location.href='login.html';
+
+  headerUsername.textContent = `${user.username} • Premium Access`;
+
+  const darkMode = await getSetting(user.username,'darkMode');
+  if(darkMode==='true') document.body.classList.add('dark');
+}
+loadUserProfile();
+
+// ------------------
+// Courses data
+const courses = [
+  {title:"Introduction to HTML", category:"frontend", image:"html.jpg", desc:"Learn the basic structure of web pages.", link:"html.html"},
+  {title:"CSS Mastery", category:"frontend", image:"css.jpg", desc:"Master modern CSS and responsive layouts.", link:"css.html"},
+  {title:"JavaScript Fundamentals", category:"frontend", image:"js.jpg", desc:"Understand core JavaScript concepts.", link:"js.html"},
+  {title:"UI/UX Design", category:"design", image:"UI_UX.jpg", desc:"Learn interface and experience design.", link:"uiux.html"},
+  {title:"Python Programming", category:"programming", image:"python.jpg", desc:"Start coding Python for real-world projects.", link:"python.html"},
+];
+
+// ------------------
+// Render courses
+function renderCourses(category="all") {
+  const container = document.getElementById("coursesContainer");
+  container.innerHTML = "";
+  const filtered = category==="all"? courses : courses.filter(c=>c.category===category);
+  filtered.forEach(c=>{
+    const item = document.createElement('div');
+    item.className = 'course-item';
+    item.innerHTML = `
+      <img src="${c.image}" alt="${c.title}">
+      <div class="course-body">
+        <h2>${c.title}</h2>
+        <p>${c.desc}</p>
+        <button onclick="location.href='${c.link}'">Start Course</button>
+      </div>
+    `;
+    container.appendChild(item);
+  });
+}
+
+// ------------------
+// Tabs filter
+document.querySelectorAll(".tab").forEach(tab=>{
+  tab.addEventListener("click",()=>{
+    document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+    tab.classList.add("active");
+    renderCourses(tab.dataset.category);
+  });
+});
+
+// ------------------
+// Bottom nav active
+document.querySelectorAll(".nav-item").forEach(item=>{
+  item.addEventListener("click",()=>{
+    document.querySelectorAll(".nav-item").forEach(x=>x.classList.remove("active"));
+    item.classList.add("active");
+  });
+});
+
+// ------------------
+// Initial render
+renderCourses("all");
+</script>
+</body>
+</html>
