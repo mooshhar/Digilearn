@@ -54,23 +54,7 @@ function showMessage(text, type='error'){
 // ---------------------------
 // Login handler
 // ---------------------------
-async function loginUser(usernameOrEmail, password){
-  if(!usernameOrEmail || !password) return { success:false, message:'Please fill in all fields' };
 
-  await initDB();
-  try {
-    const user = await getUser(usernameOrEmail);
-    if(!user) return { success:false, message:'User not found' };
-    if(user.password !== password) return { success:false, message:'Incorrect password' };
-
-    await setSession(user.username); // <-- Save active session in IndexedDB
-
-    return { success:true, message:'Login successful!' };
-  } catch(err) {
-    console.error(err);
-    return { success:false, message:'Login failed. Try again.' };
-  }
-}
 
 // ---------------------------
 // Form submit
