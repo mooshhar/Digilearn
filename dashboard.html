@@ -219,7 +219,7 @@ async function loadUserProfile(){
   const username = await getCurrentUser();
   if(!username) return location.href='login.html';
   const user = await getUser(username);
-  if(!user) return location.href='login.html';
+  if(!user) return location.href='welcome.html';
 
   headerUsername.textContent = `${user.username} • Premium Access`;
 
