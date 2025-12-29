@@ -1,216 +1,209 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>DigiLearn — All-in-One</title>
 <style>
 :root {
   --bg: #f6fbff; --card: #fff; --accent: #2563eb; --accent-soft: rgba(37,99,235,0.13);
   --text-dark: #0f172a; --muted: #6b7280; --radius: 18px;
-  --shadow-soft: 0 8px 24px rgba(16,24,40,0.08);
-  --transition: 240ms cubic-bezier(.25,.45,.35,1);
+  --shadow-soft: 0 8px 24px rgba(16,24,40,0.08); --transition: 240ms cubic-bezier(.25,.45,.35,1);
 }
 body.dark {
-  --bg: #1f2937; --card: #111827; --accent: #3b82f6; --accent-soft: rgba(59,130,246,0.13);
-  --text-dark: #f9fafb; --muted: #9ca3af;
+  --bg:#1f2937; --card:#111827; --accent:#3b82f6; --accent-soft: rgba(59,130,246,0.13);
+  --text-dark:#f9fafb; --muted:#9ca3af;
 }
-* { box-sizing:border-box; margin:0; padding:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial; }
-html, body { height:100%; background:var(--bg); color:var(--text-dark); display:flex; justify-content:center; align-items:center; padding:20px; }
-.hidden { display:none; }
-.wrapper { width:100%; max-width:430px; background: var(--card); padding:32px; border-radius: var(--radius); box-shadow: var(--shadow-soft); text-align:center; opacity:1; transition: opacity 0.3s ease, transform 0.3s ease; }
-input { width:100%; padding:14px; border-radius:14px; border:1px solid rgba(0,0,0,0.1); font-size:17px; margin-bottom:12px; }
-input:focus { border-color: var(--accent); outline:none; box-shadow:0 0 0 3px rgba(37,99,235,0.18); }
-.btn-primary { padding:14px; border:none; border-radius:14px; background:var(--accent); color:#fff; font-size:17px; cursor:pointer; font-weight:600; margin-top:10px; }
-.btn-secondary { margin-top:10px; padding:12px; border-radius:12px; border:1px solid rgba(0,0,0,0.12); background:#f8fafc; color:var(--text-dark); font-size:16px; cursor:pointer; }
-.message { margin-top:18px; font-size:15px; font-weight:500; opacity:0; transition: opacity 0.3s ease, transform 0.3s ease; }
-.message.show { opacity:1; transform:translateY(0); }
-.success { color:#059669; }
-.error { color:#dc2626; }
-
-/* Splash specific */
-.splash { width:100%; max-width:420px; background: linear-gradient(180deg, rgba(255,255,255,0.85), rgba(255,255,255,0.95)); border-radius:24px; box-shadow: var(--shadow-soft); padding:32px; display:flex; flex-direction:column; align-items:center; gap:18px; text-align:center; opacity:1; transition: opacity 0.5s ease; }
-.spinner{ width:64px; height:64px; border:6px solid rgba(99,102,241,0.12); border-top-color: var(--accent); border-radius:50%; animation:spin 1.05s linear infinite; margin-bottom:14px; }
-@keyframes spin { to { transform: rotate(360deg); } }
-
+*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial}
+html, body{height:100%}
+body{display:flex;align-items:center;justify-content:center;background:var(--bg);color:var(--text-dark);}
+.hidden{display:none;}
+.wrapper{width:100%;max-width:430px;background:var(--card);border-radius:var(--radius);padding:32px;text-align:center;box-shadow:var(--shadow-soft);}
+input, select{width:100%;padding:14px;border-radius:14px;border:1px solid rgba(0,0,0,0.1);font-size:16px;margin-top:12px;}
+input:focus, select:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 3px rgba(37,99,235,0.18);}
+.btn-primary{padding:14px;border:none;border-radius:14px;background:var(--accent);color:#fff;font-size:16px;cursor:pointer;margin-top:16px;font-weight:600;}
+.title{font-size:24px;font-weight:700;margin-bottom:24px;}
+.message{margin-top:18px;font-size:15px;font-weight:500;color:#dc2626;display:none;}
+.message.success{color:#059669;}
+.logo{width:84px;height:84px;margin:0 auto 16px;background:linear-gradient(135deg,var(--accent-soft),rgba(37,99,235,0.04));border-radius:14px;display:flex;align-items:center;justify-content:center;}
+.logo img{width:68%;}
+.question-label{font-size:13px;font-weight:600;color:var(--muted);margin:10px 0 6px;}
+.note{text-align:center;font-size:13px;color:var(--muted);margin-top:14px;}
+select.input{appearance:none;-webkit-appearance:none;-moz-appearance:none;}
+.splash{display:flex;flex-direction:column;align-items:center;gap:18px;min-height:320px;justify-content:center;opacity:0;animation:fadeInUp 700ms cubic-bezier(.2,.9,.3,1) forwards;}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(14px) scale(0.998);}to{opacity:1;transform:translateY(0) scale(1);}}
+.spinner{--size:64px;width:var(--size);height:var(--size);border-radius:50%;position:relative;}
+.ring{width:100%;height:100%;border:6px solid rgba(99,102,241,0.12);border-top-color: var(--accent);border-radius:50%;animation:spin 1.05s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
 </style>
 </head>
 <body>
 
 <!-- Splash Screen -->
-<section id="splash" class="splash">
-  <div class="logo"><img src="logo.png" alt="DigiLearn Logo" style="width:70%;"></div>
-  <h1 class="title">DigiLearn <span class="dot" style="width:8px;height:8px;background:var(--accent);border-radius:50%;display:inline-block;"></span></h1>
-  <div class="spinner"></div>
-  <p class="tagline">Loading your learning experience…</p>
-</section>
+<div id="splash" class="splash">
+  <div class="logo"><img src="logo.png" alt="DigiLearn logo"></div>
+  <h1 class="title">DigiLearn <span class="dot"></span></h1>
+  <div class="spinner"><div class="ring"></div></div>
+  <p class="note">Loading your learning experience…</p>
+</div>
 
-<!-- Login/Welcome -->
-<section id="loginSection" class="wrapper hidden">
+<!-- Welcome/Login -->
+<div id="welcome" class="wrapper hidden">
   <div class="title">Welcome to DigiLearn</div>
   <form id="loginForm">
     <input type="text" id="loginUsername" placeholder="Username or Email" required>
     <input type="password" id="loginPassword" placeholder="Password" required>
-    <button class="btn-primary" type="submit">Login</button>
+    <button type="submit" class="btn-primary">Login</button>
   </form>
   <div id="loginMsg" class="message"></div>
-  <button class="btn-secondary" id="toSignupBtn">Create Account</button>
-  <button class="btn-secondary" id="toForgotBtn">Forgot Password?</button>
-</section>
+  <p class="note">No account? <a href="#" id="goSignup">Sign up</a> | <a href="#" id="goForgot">Forgot password?</a></p>
+</div>
 
 <!-- Signup -->
-<section id="signupSection" class="wrapper hidden">
+<div id="signup" class="wrapper hidden">
+  <div class="logo"><img src="logo.png" alt="DigiLearn"></div>
   <h1>Create your DigiLearn account</h1>
-  <form id="signupForm" novalidate>
-    <input id="signupUsername" type="text" placeholder="Username (unique)" required>
-    <input id="signupEmail" type="email" placeholder="Email (optional)">
-    <input id="signupPassword" type="password" placeholder="Password (min 6)" required>
+  <form id="signupForm">
+    <input id="signupUsername" placeholder="Username" required>
+    <input id="signupEmail" placeholder="Email (optional)">
+    <input id="signupPassword" type="password" placeholder="Password" required>
     <input id="signupConfirm" type="password" placeholder="Confirm password" required>
-    <div>Security Question #1</div>
-    <input id="signupQ1" placeholder="Enter security question #1" required>
-    <input id="signupA1" placeholder="Answer #1" required>
-    <div>Security Question #2</div>
-    <input id="signupQ2" placeholder="Enter security question #2" required>
-    <input id="signupA2" placeholder="Answer #2" required>
-    <button class="btn-primary" type="submit">Create account</button>
+    <select id="q1">
+      <option value="">Select question #1</option>
+      <option>What is your mother’s maiden name?</option>
+      <option>What was the name of your first pet?</option>
+      <option>What city were you born in?</option>
+      <option value="custom">Custom question</option>
+    </select>
+    <input id="q1custom" class="hidden" placeholder="Custom question #1">
+    <input id="a1" placeholder="Answer #1" required>
+    <select id="q2">
+      <option value="">Select question #2</option>
+      <option>What is your favorite teacher’s name?</option>
+      <option>What is the name of your best friend?</option>
+      <option>What is your dream job?</option>
+      <option value="custom">Custom question</option>
+    </select>
+    <input id="q2custom" class="hidden" placeholder="Custom question #2">
+    <input id="a2" placeholder="Answer #2" required>
+    <button type="submit" class="btn-primary">Create account</button>
   </form>
   <div id="signupMsg" class="message"></div>
-  <button class="btn-secondary" id="toLoginFromSignup">Back to Login</button>
-</section>
+  <p class="note">Already have an account? <a href="#" id="backToLogin1">Sign in</a></p>
+</div>
 
 <!-- Forgot Password -->
-<section id="forgotSection" class="wrapper hidden">
+<div id="forgot" class="wrapper hidden">
   <div class="title">Reset Your Password</div>
-  <input id="forgotUsername" placeholder="Username or Email">
-  <button class="btn-primary" id="checkUserBtn">Next</button>
+  <input id="forgotUsername" placeholder="Username or email">
+  <button id="checkUserBtn" class="btn-primary">Next</button>
   <div id="questionsBox" class="hidden">
     <div id="question1"></div>
     <input id="answer1" placeholder="Answer #1">
     <div id="question2"></div>
     <input id="answer2" placeholder="Answer #2">
-    <button class="btn-primary" id="verifyBtn">Verify Answers</button>
+    <button id="verifyBtn" class="btn-primary">Verify Answers</button>
   </div>
   <div id="resetBox" class="hidden">
-    <input id="newPass" type="password" placeholder="New Password">
-    <button class="btn-primary" id="resetBtn">Reset Password</button>
+    <input id="newPass" type="password" placeholder="New password">
+    <button id="resetBtn" class="btn-primary">Reset Password</button>
   </div>
   <div id="forgotMsg" class="message"></div>
-  <button class="btn-secondary" id="toLoginFromForgot">Back to Login</button>
-</section>
+  <p class="note"><a href="#" id="backToLogin2">Back to login</a></p>
+</div>
 
-<!-- Dashboard/Profile -->
-<section id="dashboardSection" class="wrapper hidden">
+<!-- Dashboard -->
+<div id="dashboard" class="wrapper hidden">
   <div class="title">Dashboard</div>
-  <p id="welcomeUser">Welcome, User!</p>
-  <button class="btn-primary" id="logoutBtn">Logout</button>
-</section>
+  <p>Welcome! You are logged in.</p>
+  <button id="logoutBtn" class="btn-primary">Logout</button>
+</div>
 
 <script type="module">
-import { getUser, setSession, initDB, userExists, createUser, updateUser } from './auth_v6_1.js';
+/* Simple in-memory "DB" for demo (replace with IndexedDB as needed) */
+let users = [];
 
-// Utility
-const showSection = (id) => {
-  document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
-  document.getElementById(id).classList.remove('hidden');
+const $ = id => document.getElementById(id);
+
+/* Page Navigation */
+function showPage(pageId){
+  ['splash','welcome','signup','forgot','dashboard'].forEach(id=>{
+    $(id).classList.add('hidden');
+  });
+  $(pageId).classList.remove('hidden');
 }
-const showMessage = (el, text, type='error') => {
-  el.className='message';
-  void el.offsetWidth;
-  el.textContent=text;
-  el.classList.add('show', type);
-}
 
-// ---------------- Splash to Login ----------------
-setTimeout(() => { showSection('loginSection'); }, 3000); // 3s splash
+/* Splash screen redirect */
+showPage('splash');
+setTimeout(()=>showPage('welcome'), 3000);
 
-// ---------------- Navigation ----------------
-document.getElementById('toSignupBtn').onclick = ()=> showSection('signupSection');
-document.getElementById('toForgotBtn').onclick = ()=> showSection('forgotSection');
-document.getElementById('toLoginFromSignup').onclick = ()=> showSection('loginSection');
-document.getElementById('toLoginFromForgot').onclick = ()=> showSection('loginSection');
-
-// ---------------- Login ----------------
-const loginForm = document.getElementById('loginForm');
-const loginMsg = document.getElementById('loginMsg');
-loginForm.addEventListener('submit', async e=>{
+/* LOGIN */
+$('#loginForm').addEventListener('submit', e=>{
   e.preventDefault();
-  const usernameOrEmail = document.getElementById('loginUsername').value.trim();
-  const password = document.getElementById('loginPassword').value;
-  if(!usernameOrEmail||!password) return showMessage(loginMsg,'Please fill in all fields');
-  await initDB();
-  try {
-    const user = await getUser(usernameOrEmail);
-    if(!user) return showMessage(loginMsg,'User not found');
-    if(user.password!==password) return showMessage(loginMsg,'Incorrect password');
-    await setSession(user.username);
-    document.getElementById('welcomeUser').textContent = `Welcome, ${user.username}!`;
-    showSection('dashboardSection');
-  } catch(err) { console.error(err); showMessage(loginMsg,'Login failed'); }
+  const u = $('#loginUsername').value.trim();
+  const p = $('#loginPassword').value;
+  const user = users.find(x=>x.username===u);
+  const msgEl = $('#loginMsg');
+  if(!user){ msgEl.textContent='User not found'; msgEl.className='message error'; return; }
+  if(user.password!==p){ msgEl.textContent='Incorrect password'; msgEl.className='message error'; return; }
+  msgEl.textContent='Login successful'; msgEl.className='message success';
+  setTimeout(()=>showPage('dashboard'),700);
 });
 
-// ---------------- Signup ----------------
-const signupForm = document.getElementById('signupForm');
-const signupMsg = document.getElementById('signupMsg');
-signupForm.addEventListener('submit', async e=>{
+/* SIGNUP */
+function handleCustom(sel, custom){
+  sel.addEventListener('change',()=>{custom.classList.toggle('hidden', sel.value!=='custom');});
+}
+handleCustom($('#q1'),$('#q1custom'));
+handleCustom($('#q2'),$('#q2custom'));
+
+$('#signupForm').addEventListener('submit', e=>{
   e.preventDefault();
-  const username = document.getElementById('signupUsername').value.trim();
-  const email = document.getElementById('signupEmail').value.trim();
-  const password = document.getElementById('signupPassword').value;
-  const confirm = document.getElementById('signupConfirm').value;
-  const q1 = document.getElementById('signupQ1').value.trim();
-  const a1 = document.getElementById('signupA1').value.trim();
-  const q2 = document.getElementById('signupQ2').value.trim();
-  const a2 = document.getElementById('signupA2').value.trim();
-
-  if(!username) return showMessage(signupMsg,'Please choose username');
-  if(password.length<6) return showMessage(signupMsg,'Password too short');
-  if(password!==confirm) return showMessage(signupMsg,'Passwords do not match');
-  if(!q1||!q2||!a1||!a2) return showMessage(signupMsg,'Fill security questions');
-
-  if(await userExists(username)) return showMessage(signupMsg,'Username exists');
-  const result = await createUser({username,email,password,q1,a1,q2,a2,created:Date.now()});
-  if(!result.success) return showMessage(signupMsg,result.message||'Signup failed');
-  showMessage(signupMsg,'Account created successfully','success');
-  setTimeout(()=> showSection('loginSection'),900);
+  const username = $('#signupUsername').value.trim();
+  if(users.find(x=>x.username===username)){ $('#signupMsg').textContent='Username exists'; $('#signupMsg').className='message error'; return;}
+  const newUser = {
+    username,
+    password: $('#signupPassword').value,
+    email: $('#signupEmail').value,
+    q1: $('#q1').value==='custom'?$('#q1custom').value:$('#q1').value,
+    q2: $('#q2').value==='custom'?$('#q2custom').value:$('#q2').value,
+    a1: $('#a1').value,
+    a2: $('#a2').value
+  };
+  users.push(newUser);
+  $('#signupMsg').textContent='Account created'; $('#signupMsg').className='message success';
+  setTimeout(()=>showPage('welcome'),900);
 });
 
-// ---------------- Forgot Password ----------------
+/* FORGOT PASSWORD */
 let currentUser = null;
-const forgotMsg = document.getElementById('forgotMsg');
-document.getElementById('checkUserBtn').onclick = async () => {
-  const uname = document.getElementById('forgotUsername').value.trim();
-  if(!uname) return showMessage(forgotMsg,'Enter username');
-  await initDB();
-  currentUser = await getUser(uname);
-  if(!currentUser) return showMessage(forgotMsg,'User not found');
-  document.getElementById('question1').textContent = currentUser.q1;
-  document.getElementById('question2').textContent = currentUser.q2;
-  document.getElementById('questionsBox').classList.remove('hidden');
-  showMessage(forgotMsg,'Answer your security questions','success');
-}
-document.getElementById('verifyBtn').onclick = ()=>{
-  if(!currentUser) return showMessage(forgotMsg,'No user selected');
-  const a1 = document.getElementById('answer1').value.trim().toLowerCase();
-  const a2 = document.getElementById('answer2').value.trim().toLowerCase();
-  if(a1!==currentUser.a1.toLowerCase()||a2!==currentUser.a2.toLowerCase()) return showMessage(forgotMsg,'Incorrect answers');
-  document.getElementById('resetBox').classList.remove('hidden');
-  showMessage(forgotMsg,'Verification successful','success');
-}
-document.getElementById('resetBtn').onclick = async ()=>{
-  if(!currentUser) return showMessage(forgotMsg,'No user selected');
-  const newPass = document.getElementById('newPass').value.trim();
-  if(newPass.length<6) return showMessage(forgotMsg,'Password too short');
-  currentUser.password = newPass;
-  await updateUser(currentUser);
-  showMessage(forgotMsg,'Password updated!','success');
-  setTimeout(()=> showSection('loginSection'),1500);
-}
+$('#checkUserBtn').addEventListener('click',()=>{
+  const u = $('#forgotUsername').value.trim();
+  currentUser = users.find(x=>x.username===u);
+  if(!currentUser){ $('#forgotMsg').textContent='User not found'; $('#forgotMsg').className='message error'; return;}
+  $('#question1').textContent=currentUser.q1;
+  $('#question2').textContent=currentUser.q2;
+  $('#questionsBox').classList.remove('hidden');
+});
+$('#verifyBtn').addEventListener('click',()=>{
+  if($('#answer1').value!==currentUser.a1 || $('#answer2').value!==currentUser.a2){
+    $('#forgotMsg').textContent='Incorrect answers'; $('#forgotMsg').className='message error'; return;
+  }
+  $('#resetBox').classList.remove('hidden'); $('#forgotMsg').textContent='Verified'; $('#forgotMsg').className='message success';
+});
+$('#resetBtn').addEventListener('click',()=>{
+  currentUser.password = $('#newPass').value;
+  $('#forgotMsg').textContent='Password reset'; $('#forgotMsg').className='message success';
+  setTimeout(()=>showPage('welcome'),1000);
+});
 
-// ---------------- Dashboard ----------------
-document.getElementById('logoutBtn').onclick = ()=>{
-  setSession(null);
-  showSection('loginSection');
-}
+/* NAVIGATION LINKS */
+$('#goSignup').addEventListener('click',()=>showPage('signup'));
+$('#goForgot').addEventListener('click',()=>showPage('forgot'));
+$('#backToLogin1').addEventListener('click',()=>showPage('welcome'));
+$('#backToLogin2').addEventListener('click',()=>showPage('welcome'));
+$('#logoutBtn').addEventListener('click',()=>showPage('welcome'));
 </script>
+
 </body>
       </html>
