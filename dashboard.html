@@ -39,7 +39,7 @@ header h2 { font-size:20px; } header p { opacity:.9; font-size:14px; }
 .course-body button:active { transform:scale(.92); }
 
 nav { position:fixed; bottom:0; left:0; width:100%; background: var(--card); display:flex; justify-content:space-around; padding:14px 0; border-top-left-radius:28px; border-top-right-radius:28px; box-shadow:0 -5px 28px rgba(0,0,0,0.18); z-index:30; transition: background .3s; }
-.nav-item { display:flex; flex-direction:column; align-items:center; justify-content:center; text-decoration:none; color:var(--muted); font-size:12px; width:25%; position:relative; cursor:pointer; transition:.25s, color .3s; }
+.nav-item { display:flex; flex-direction:column; align-items:center; justify-content:center; color:var(--muted); font-size:12px; width:25%; position:relative; cursor:pointer; transition:.25s, color .3s; }
 .nav-item img { width:36px; height:36px; margin-bottom:2px; opacity:0.55; transition:.25s, filter .3s; }
 .nav-item span { display:block; font-size:12px; }
 .nav-item.active { color:var(--primary); }
@@ -70,20 +70,20 @@ nav { position:fixed; bottom:0; left:0; width:100%; background: var(--card); dis
 </main>
 
 <nav>
-  <a class="nav-item active" href="#"><img src="https://via.placeholder.com/36"><span>Home</span></a>
-  <a class="nav-item" href="#"><img src="https://via.placeholder.com/36"><span>Learn</span></a>
-  <a class="nav-item" href="#"><img src="https://via.placeholder.com/36"><span>Settings</span></a>
-  <a class="nav-item" href="#"><img src="https://via.placeholder.com/36"><span>Profile</span></a>
+  <div class="nav-item active"><img src="https://via.placeholder.com/36"><span>Home</span></div>
+  <div class="nav-item"><img src="https://via.placeholder.com/36"><span>Learn</span></div>
+  <div class="nav-item"><img src="https://via.placeholder.com/36"><span>Settings</span></div>
+  <div class="nav-item"><img src="https://via.placeholder.com/36"><span>Profile</span></div>
 </nav>
 
 <script>
 // Courses data
 const courses = [
-  {title:"Introduction to HTML", category:"frontend", image:"https://via.placeholder.com/400x180?text=HTML", desc:"Learn the basic structure of web pages.", link:"#"},
-  {title:"CSS Mastery", category:"frontend", image:"https://via.placeholder.com/400x180?text=CSS", desc:"Master modern CSS and responsive layouts.", link:"#"},
-  {title:"JavaScript Fundamentals", category:"frontend", image:"https://via.placeholder.com/400x180?text=JS", desc:"Understand core JavaScript concepts.", link:"#"},
-  {title:"UI/UX Design", category:"design", image:"https://via.placeholder.com/400x180?text=UI/UX", desc:"Learn interface and experience design.", link:"#"},
-  {title:"Python Programming", category:"programming", image:"https://via.placeholder.com/400x180?text=Python", desc:"Start coding Python for real-world projects.", link:"#"},
+  {title:"Introduction to HTML", category:"frontend", image:"https://via.placeholder.com/400x180?text=HTML", desc:"Learn the basic structure of web pages."},
+  {title:"CSS Mastery", category:"frontend", image:"https://via.placeholder.com/400x180?text=CSS", desc:"Master modern CSS and responsive layouts."},
+  {title:"JavaScript Fundamentals", category:"frontend", image:"https://via.placeholder.com/400x180?text=JS", desc:"Understand core JavaScript concepts."},
+  {title:"UI/UX Design", category:"design", image:"https://via.placeholder.com/400x180?text=UI/UX", desc:"Learn interface and experience design."},
+  {title:"Python Programming", category:"programming", image:"https://via.placeholder.com/400x180?text=Python", desc:"Start coding Python for real-world projects."},
 ];
 
 // Render courses
@@ -99,7 +99,7 @@ function renderCourses(category){
         <div class="course-body">
           <h2>${c.title}</h2>
           <p>${c.desc}</p>
-          <button onclick="alert('Open ${c.title}')">Open Course</button>
+          <button disabled>Open Course</button>
         </div>`;
       container.appendChild(div);
     });
@@ -126,4 +126,4 @@ document.querySelectorAll(".nav-item").forEach(item=>{
 renderCourses("all");
 </script>
 </body>
-  </html>
+                                                                    </html>
